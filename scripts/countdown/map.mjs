@@ -6,7 +6,7 @@ import { LEAFLET_TOKEN } from '../../config/secrets.mjs';
 export class WorldMap extends LitElement {
     static styles = css`
         #map {
-            height: 180px;
+            height: 800px;
         }
     `;
 
@@ -20,17 +20,17 @@ export class WorldMap extends LitElement {
         const mapElt = this.renderRoot?.querySelector('#map') ?? null;
         console.log('map', mapElt);
         if (mapElt) {
-            var map = L.map(mapElt).setView([51.505, -0.09], 13);
+            var map = L.map(mapElt).setView([51.505, -0.09], 3);
             L.tileLayer(
-                'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+                'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}',
                 {
                     attribution:
-                        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                    maxZoom: 18,
-                    id: 'mapbox/streets-v11',
-                    tileSize: 512,
-                    zoomOffset: -1,
+                        'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    subdomains: 'abcd',
+                    minZoom: 1,
+                    maxZoom: 20,
                     accessToken: LEAFLET_TOKEN,
+                    ext: 'jpg',
                 }
             ).addTo(map);
 
@@ -44,7 +44,14 @@ export class WorldMap extends LitElement {
 
     render() {
         console.log('render');
-        return html` <div id="map"></div> `;
+        return html`
+            <link
+                rel="stylesheet"
+                href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+                integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+                crossorigin="" />
+            <div id="map"></div>
+        `;
     }
 }
 customElements.define('world-map', WorldMap);
