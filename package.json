@@ -1,0 +1,40 @@
+{
+    "name": "countdowndevfest2022",
+    "version": "1.0.0",
+    "description": "CountDown for DevFest Nantes 2022",
+    "main": "index.js",
+    "scripts": {
+        "start": "concurrently \"npm:sass\" \"npm:snow\"",
+        "sass": "sass --watch ./scss/style.scss ./css/style.css",
+        "snow": "snowpack dev",
+        "snow:build": "snowpack build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GDG-Nantes/CountDownDevFest2022.git"
+    },
+    "keywords": [
+        "countdown",
+        "game",
+        "js",
+        "lit",
+        "devfest"
+    ],
+    "author": "jefbinomed",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/GDG-Nantes/CountDownDevFest2022/issues"
+    },
+    "homepage": "https://github.com/GDG-Nantes/CountDownDevFest2022#readme",
+    "devDependencies": {
+        "concurrently": "^7.0.0",
+        "sass": "^1.49.7",
+        "snowpack": "^3.8.8"
+    },
+    "dependencies": {
+        "d3": "^7.3.0",
+        "leaflet": "^1.7.1",
+        "lit": "^2.1.3"
+    }
+}
