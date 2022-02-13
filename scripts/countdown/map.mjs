@@ -12,15 +12,21 @@ export class WorldMap extends LitElement {
 
     constructor() {
         super();
+        fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
+            .then((res) => res.json())
+            .then((json) => {
+                console.log(json);
+                this.showMarkers(json);
+            });
     }
 
     firstUpdated() {
         console.log('firstUpdated');
         super.connectedCallback();
-        const mapElt = this.renderRoot?.querySelector('#map') ?? null;
-        console.log('map', mapElt);
-        if (mapElt) {
-            var map = L.map(mapElt).setView([51.505, -0.09], 3);
+        this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
+        console.log('map', this.mapElt);
+        if (this.mapElt) {
+            this.map = L.map(this.mapElt).setView([47.23, -1.57], 3);
             L.tileLayer(
                 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}',
                 {
@@ -32,14 +38,77 @@ export class WorldMap extends LitElement {
                     accessToken: LEAFLET_TOKEN,
                     ext: 'jpg',
                 }
-            ).addTo(map);
+            ).addTo(this.map);
 
             // Add a svg layer to the map
-            L.svg().addTo(map);
+            L.svg().addTo(this.map);
 
-            const d3Map = d3.select(mapElt);
-            console.log(d3Map);
+            /*d3Map.selectAll("myCircles")
+            .data(markers)
+            .enter()
+            .append("circle")
+              .attr("cx", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).x })
+              .attr("cy", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).y })
+              .attr("r", 14)
+              .style("fill", "red")
+              .attr("stroke", "red")
+              .attr("stroke-width", 3)
+              .attr("fill-opacity", .4)*/
+
+            //.on('mouseover', function(d){})
         }
+    }
+
+    showMarkers(data) {
+        var markers = [
+            { long: 9.083, lat: 42.149 }, // corsica
+            { long: 7.26, lat: 43.71 }, // nice
+            { long: 2.349, lat: 48.864 }, // Paris
+            { long: -1.397, lat: 43.664 }, // Hossegor
+            { long: 3.075, lat: 50.64 }, // Lille
+            { long: -3.83, lat: 48 }, // Morlaix
+        ];
+
+        markers = [];
+        for (let region of data) {
+            for (let { latitude, longitude } of region.chapters) {
+                markers.push({ latitude, longitude });
+            }
+        }
+
+        const d3Map = d3.select(this.mapElt).select('svg');
+        d3Map
+            .selectAll('myPlaces')
+            .data(markers)
+            .enter()
+            .append('svg:path')
+            .attr('class', 'marker')
+            .attr(
+                'd',
+                'M0,0l-8.8-17.7C-12.1-24.3-7.4-32,0-32h0c7.4,0,12.1,7.7,8.8,14.3L0,0z'
+            )
+            .attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.longitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return 'translate(' + x + ',' + y + ') scale(0)';
+            })
+            .transition()
+            .delay(400)
+            .duration(800)
+            //.ease('elastic')
+            .attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.longitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return 'translate(' + x + ',' + y + ') scale(.25)';
+            });
     }
 
     render() {
@@ -55,3 +124,17 @@ export class WorldMap extends LitElement {
     }
 }
 customElements.define('world-map', WorldMap);
+
+/**
+ *
+ *
+ * submarine : https://thenounproject.com/icon/submarine-2393606/
+ * boat : https://thenounproject.com/icon/boat-24055/
+ * horses : https://thenounproject.com/icon/horse-2717676/
+ * train : https://thenounproject.com/icon/train-39857/
+ * train : https://thenounproject.com/icon/train-1067538/
+ * baloon : https://thenounproject.com/icon/hot-air-balloon-2454934/
+ * baloon : https://thenounproject.com/icon/hot-air-balloon-3928407/
+ *
+ *
+ */
