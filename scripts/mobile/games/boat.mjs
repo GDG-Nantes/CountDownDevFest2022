@@ -8,6 +8,7 @@ export class BoatGame extends LitElement {
     render() {
         return html`
             <p>Boat Game</p>
+            <world-map zoom="10" size-point="1"></world-map>
             <button @click="${this.quitEvent}">Quit</button>
         `;
     }

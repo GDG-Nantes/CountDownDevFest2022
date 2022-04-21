@@ -10,8 +10,15 @@ export class WorldMap extends LitElement {
         }
     `;
 
+    static properties = {
+        zoom: { type: Number },
+        sizePoint: { type: Number, attribute: 'size-point' },
+    };
+
     constructor() {
         super();
+        this.zoom = 3;
+        this.sizePoint = 0.25;
         fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
             .then((res) => res.json())
             .then((json) => {
@@ -26,7 +33,7 @@ export class WorldMap extends LitElement {
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
         console.log('map', this.mapElt);
         if (this.mapElt) {
-            this.map = L.map(this.mapElt).setView([47.23, -1.57], 3);
+            this.map = L.map(this.mapElt).setView([47.23, -1.57], +this.zoom);
             L.tileLayer(
                 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}',
                 {
@@ -60,16 +67,7 @@ export class WorldMap extends LitElement {
     }
 
     showMarkers(data) {
-        var markers = [
-            { long: 9.083, lat: 42.149 }, // corsica
-            { long: 7.26, lat: 43.71 }, // nice
-            { long: 2.349, lat: 48.864 }, // Paris
-            { long: -1.397, lat: 43.664 }, // Hossegor
-            { long: 3.075, lat: 50.64 }, // Lille
-            { long: -3.83, lat: 48 }, // Morlaix
-        ];
-
-        markers = [];
+        const markers = [];
         for (let region of data) {
             for (let { latitude, longitude } of region.chapters) {
                 markers.push({ latitude, longitude });
@@ -107,7 +105,7 @@ export class WorldMap extends LitElement {
                 ]);
                 let x = proj.x;
                 let y = proj.y;
-                return 'translate(' + x + ',' + y + ') scale(.25)';
+                return `translate(${x},${y}) scale(${this.sizePoint})`;
             });
     }
 

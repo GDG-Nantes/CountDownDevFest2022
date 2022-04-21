@@ -8,6 +8,7 @@ export class TrainGame extends LitElement {
     render() {
         return html`
             <p>Train Game</p>
+            <world-map zoom="10" size-point="1"></world-map>
             <button @click="${this.quitEvent}">Quit</button>
         `;
     }

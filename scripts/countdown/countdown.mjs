@@ -9,7 +9,7 @@ export class CountDown extends LitElement {
     render() {
         return html`
             <p>Hello from lit</p>
-            <world-map></world-map>
+            <world-map zoom="3" size-point=".25"></world-map>
         `;
     }
 }
