@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "concurrently \"npm:sass\" \"npm:snow\"",
+        "prepare-data": "node ./scripts/preparation/prepare-data.mjs",
         "sass": "sass --watch ./scss/style.scss ./css/style.css",
         "snow": "snowpack dev",
         "snow:build": "snowpack build",
@@ -29,6 +30,7 @@
     "homepage": "https://github.com/GDG-Nantes/CountDownDevFest2022#readme",
     "devDependencies": {
         "concurrently": "^7.0.0",
+        "node-fetch": "^3.2.4",
         "sass": "^1.49.7",
         "snowpack": "^3.8.8"
     },
