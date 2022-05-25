@@ -17,6 +17,10 @@ export class Mobile extends LitElement {
         this.game = 0;
     }
 
+    static properties = {
+        continents: { type: Array },
+    };
+
     render() {
         return html`
             <p>Hello from mobile</p>
@@ -46,20 +50,25 @@ export class Mobile extends LitElement {
         switch (this.game) {
             case GAME_TRAIN:
                 return html`<train-game
+                    .continents=${this.continents}
                     @exitGameEvent="${() => this.selectGame(0)}"></train-game>`;
             case GAME_HORSE:
                 return html`<horse-game
+                    .continents=${this.continents}
                     @exitGameEvent="${() => this.selectGame(0)}"></horse-game>`;
             case GAME_BALOON:
                 return html`<baloon-game
+                    .continents=${this.continents}
                     @exitGameEvent="${() =>
                         this.selectGame(0)}"></baloon-game>`;
             case GAME_SUBMARINE:
                 return html`<submarine-game
+                    .continents=${this.continents}
                     @exitGameEvent="${() =>
                         this.selectGame(0)}"></submarine-game>`;
             case GAME_BOAT:
                 return html`<boat-game
+                    .continents=${this.continents}
                     @exitGameEvent="${() => this.selectGame(0)}"></boat-game>`;
         }
     }

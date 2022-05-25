@@ -13,23 +13,19 @@ export class WorldMap extends LitElement {
     static properties = {
         zoom: { type: Number },
         sizePoint: { type: Number, attribute: 'size-point' },
+        continents: { type: Array },
     };
 
     constructor() {
         super();
         this.zoom = 3;
         this.sizePoint = 0.25;
-        fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
-            .then((res) => res.json())
-            .then((json) => {
-                console.log(json);
-                this.showMarkers(json);
-            });
     }
 
     firstUpdated() {
         console.log('firstUpdated');
         super.connectedCallback();
+
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
         console.log('map', this.mapElt);
         if (this.mapElt) {
@@ -64,6 +60,7 @@ export class WorldMap extends LitElement {
 
             //.on('mouseover', function(d){})
         }
+        this.showMarkers(this.continents);
     }
 
     showMarkers(data) {

@@ -5,10 +5,17 @@ export class TrainGame extends LitElement {
         super();
     }
 
+    static properties = {
+        continents: { type: Array },
+    };
+
     render() {
         return html`
             <p>Train Game</p>
-            <world-map zoom="10" size-point="1"></world-map>
+            <world-map
+                zoom="10"
+                size-point="1"
+                .continents=${this.continents}></world-map>
             <button @click="${this.quitEvent}">Quit</button>
         `;
     }

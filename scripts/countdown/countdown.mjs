@@ -6,10 +6,17 @@ export class CountDown extends LitElement {
         super();
     }
 
+    static properties = {
+        continents: { type: Array },
+    };
+
     render() {
         return html`
             <p>Hello from lit</p>
-            <world-map zoom="3" size-point=".25"></world-map>
+            <world-map
+                zoom="3"
+                size-point=".25"
+                .continents=${this.continents}></world-map>
         `;
     }
 }
