@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import * as d3 from 'd3';
 import * as L from 'leaflet';
 import { LEAFLET_TOKEN } from '../../config/secrets.mjs';
+import { csvParse } from 'd3';
 
 export class WorldMap extends LitElement {
     static styles = css`
@@ -19,10 +20,17 @@ export class WorldMap extends LitElement {
     constructor() {
         super();
         this.zoom = 3;
-        this.sizePoint = 0.25;
+        this.sizePoint = 0.1;
     }
 
     firstUpdated() {
+        this.dictionnaryGDGChapters = {};
+        for (let continent of this.continents) {
+            for (let chapter of continent.chapters) {
+                this.dictionnaryGDGChapters[chapter.id] = chapter;
+            }
+        }
+
         console.log('firstUpdated');
         super.connectedCallback();
 
@@ -45,22 +53,16 @@ export class WorldMap extends LitElement {
 
             // Add a svg layer to the map
             L.svg().addTo(this.map);
-
-            /*d3Map.selectAll("myCircles")
-            .data(markers)
-            .enter()
-            .append("circle")
-              .attr("cx", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).x })
-              .attr("cy", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).y })
-              .attr("r", 14)
-              .style("fill", "red")
-              .attr("stroke", "red")
-              .attr("stroke-width", 3)
-              .attr("fill-opacity", .4)*/
-
-            //.on('mouseover', function(d){})
         }
+        const gdg =
+            this.continents[2].chapters[
+                Math.round(Math.random() * this.continents[2].chapters.length)
+            ];
+        this.centerToPoint(gdg);
         this.showMarkers(this.continents);
+
+        //setTimeout(() => {
+        //}, 2000);
     }
 
     showMarkers(data) {
@@ -102,8 +104,118 @@ export class WorldMap extends LitElement {
                 ]);
                 let x = proj.x;
                 let y = proj.y;
-                return `translate(${x},${y}) scale(${this.sizePoint})`;
+                return `translate(${x},${y}) scale(${
+                    this.sizePoint * this.zoom
+                })`;
             });
+
+        this.map.on('moveend', (event) => {
+            const d3Map = d3.select(this.mapElt).select('svg');
+            d3Map.selectAll('path.marker').attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.longitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return `translate(${x},${y}) scale(${
+                    this.sizePoint * event.target._zoom
+                })`;
+            });
+
+            d3Map.selectAll('path.line').attr(
+                'd',
+                d3
+                    .line()
+                    .x((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.longitude,
+                        ]);
+                        return proj.x;
+                    })
+                    .y((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.longitude,
+                        ]);
+                        return proj.y;
+                    })
+            );
+        });
+    }
+
+    centerToPoint(gdg) {
+        console.log(gdg);
+        this.map.setView([gdg.latitude, gdg.longitude]);
+
+        const dataLines = [];
+        for (let targetChapter of gdg.targetChapters) {
+            const line = [];
+            dataLines.push(line);
+            /*let projStart = this.map.latLngToLayerPoint([
+                gdg.latitude,
+                gdg.longitude,
+            ]);
+            let projEnd = this.map.latLngToLayerPoint([
+                targetChapter.targetChapter.latitude,
+                targetChapter.targetChapter.longitude,
+            ]);*/
+            line.push(gdg);
+            line.push(targetChapter.targetChapter);
+        }
+        console.log(dataLines);
+        const d3Map = d3.select(this.mapElt).select('svg');
+        d3Map
+            .selectAll('.line')
+            .data(dataLines, (d, i) => i)
+            .exit()
+            .remove()
+            .data(dataLines)
+            .enter()
+            .append('path')
+            .attr('id', (d) => d[1].id)
+            .attr('style', 'pointer-events: auto;')
+            .attr('class', 'line')
+            .attr('stroke-width', (d) => 3)
+            .attr('stroke', (d) => 'red')
+            .attr(
+                'd',
+                d3
+                    .line()
+                    .x((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.longitude,
+                        ]);
+                        return proj.x;
+                    })
+                    .y((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.longitude,
+                        ]);
+                        return proj.y;
+                    })
+            );
+        d3Map
+            .selectAll('.line')
+            .on('click', (d) => {
+                const gdgToTarget =
+                    this.dictionnaryGDGChapters[d.currentTarget.id];
+                console.log('click', gdgToTarget);
+                setTimeout(() => {
+                    this.centerToPoint(gdgToTarget);
+                }, 1000);
+            })
+            .on('mouseover', function (d) {
+                console.log('mouseover', this);
+                d3.select(this).attr('stroke-width', 5);
+            })
+            .on('mouseout', function (d) {
+                d3.select(this).attr('stroke-width', 2);
+            });
+        //.attr('fill', 'none');
     }
 
     render() {

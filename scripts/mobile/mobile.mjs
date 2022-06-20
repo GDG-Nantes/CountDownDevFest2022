@@ -43,7 +43,7 @@ export class Mobile extends LitElement {
                 ? html`
                       <world-map
                           zoom="10"
-                          size-point="1"
+                          size-point=".3"
                           .continents=${this.continents}></world-map>
                       <div class="buttons-area">
                           <button @click="${() => this.selectGame(GAME_TRAIN)}">

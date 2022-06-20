@@ -15,7 +15,7 @@ export class CountDown extends LitElement {
             <p>Hello from lit</p>
             <world-map
                 zoom="3"
-                size-point=".25"
+                size-point=".1"
                 .continents=${this.continents}></world-map>
         `;
     }
