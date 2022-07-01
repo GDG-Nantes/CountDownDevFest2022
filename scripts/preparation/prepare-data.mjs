@@ -54,6 +54,16 @@ export function prepareData() {
                             if (distanceChapters === 0) {
                                 continue;
                             }
+                            if (chapterA.id === 36)
+                                console.log(
+                                    chapterA.id,
+                                    chapterA.city,
+                                    longitudeA,
+                                    chapterB.id,
+                                    chapterB.city,
+                                    longitudeB,
+                                    distanceChapters
+                                );
 
                             if (!chapterA.targetChapters) {
                                 chapterA.targetChapters = [];
@@ -202,8 +212,10 @@ function find_angle(A, B, C) {
 }
 
 function distance(A, B) {
-    var a = A.latitude - B.latitude;
-    var b = A.longitude - B.longitude;
+    var a = A.latitude + 90 - (B.latitude + 90);
+    var b =
+        (A.longitude < 0 ? 180 + (180 + A.longitude) : A.longitude) -
+        (B.longitude < 0 ? 180 + (180 + B.longitude) : B.longitude);
 
     return Math.sqrt(a * a + b * b);
 }

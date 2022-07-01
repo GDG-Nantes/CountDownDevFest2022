@@ -4,6 +4,12 @@ import * as L from 'leaflet';
 import { LEAFLET_TOKEN } from '../../config/secrets.mjs';
 import { csvParse } from 'd3';
 
+const ID_CONTINENT_AFRICA = 1;
+const ID_CONTINENT_EUROPE = 2;
+const ID_CONTINENT_ASIA = 3;
+const ID_CONTINENT_SOUTH_AMERICA = 4;
+const ID_CONTINENT_NORTH_AMERICA = 5;
+
 export class WorldMap extends LitElement {
     static styles = css`
         #map {
@@ -21,12 +27,14 @@ export class WorldMap extends LitElement {
         super();
         this.zoom = 3;
         this.sizePoint = 0.1;
+        this.exceedMiddleEarth = false;
     }
 
     firstUpdated() {
         this.dictionnaryGDGChapters = {};
         for (let continent of this.continents) {
             for (let chapter of continent.chapters) {
+                chapter.continentID = continent.id;
                 this.dictionnaryGDGChapters[chapter.id] = chapter;
             }
         }
@@ -58,6 +66,7 @@ export class WorldMap extends LitElement {
             this.continents[2].chapters[
                 Math.round(Math.random() * this.continents[2].chapters.length)
             ];
+        gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
         this.showMarkers(this.continents);
 
@@ -68,8 +77,12 @@ export class WorldMap extends LitElement {
     showMarkers(data) {
         const markers = [];
         for (let region of data) {
-            for (let { latitude, longitude } of region.chapters) {
-                markers.push({ latitude, longitude });
+            for (let {
+                latitude,
+                longitude,
+                targetLongitude,
+            } of region.chapters) {
+                markers.push({ latitude, longitude, targetLongitude });
             }
         }
 
@@ -130,14 +143,14 @@ export class WorldMap extends LitElement {
                     .x((d) => {
                         let proj = this.map.latLngToLayerPoint([
                             d.latitude,
-                            d.longitude,
+                            d.targetLongitude,
                         ]);
                         return proj.x;
                     })
                     .y((d) => {
                         let proj = this.map.latLngToLayerPoint([
                             d.latitude,
-                            d.longitude,
+                            d.targetLongitude,
                         ]);
                         return proj.y;
                     })
@@ -147,20 +160,13 @@ export class WorldMap extends LitElement {
 
     centerToPoint(gdg) {
         console.log(gdg);
-        this.map.setView([gdg.latitude, gdg.longitude]);
+        this.map.setView([gdg.latitude, gdg.targetLongitude]);
 
         const dataLines = [];
         for (let targetChapter of gdg.targetChapters) {
             const line = [];
             dataLines.push(line);
-            /*let projStart = this.map.latLngToLayerPoint([
-                gdg.latitude,
-                gdg.longitude,
-            ]);
-            let projEnd = this.map.latLngToLayerPoint([
-                targetChapter.targetChapter.latitude,
-                targetChapter.targetChapter.longitude,
-            ]);*/
+            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
             line.push(gdg);
             line.push(targetChapter.targetChapter);
         }
@@ -186,14 +192,14 @@ export class WorldMap extends LitElement {
                     .x((d) => {
                         let proj = this.map.latLngToLayerPoint([
                             d.latitude,
-                            d.longitude,
+                            d.targetLongitude,
                         ]);
                         return proj.x;
                     })
                     .y((d) => {
                         let proj = this.map.latLngToLayerPoint([
                             d.latitude,
-                            d.longitude,
+                            d.targetLongitude,
                         ]);
                         return proj.y;
                     })
@@ -205,6 +211,9 @@ export class WorldMap extends LitElement {
                     this.dictionnaryGDGChapters[d.currentTarget.id];
                 console.log('click', gdgToTarget);
                 setTimeout(() => {
+                    if (!this.exceedMiddleEarth && gdgToTarget.longitude < 0) {
+                        this.exceedMiddleEarth = true;
+                    }
                     this.centerToPoint(gdgToTarget);
                 }, 1000);
             })
@@ -216,6 +225,64 @@ export class WorldMap extends LitElement {
                 d3.select(this).attr('stroke-width', 2);
             });
         //.attr('fill', 'none');
+    }
+
+    reworkCoordinatesOfTarget(gdg, target) {
+        if (gdg.longitude < 0) {
+            gdg.targetLongitude = 180 + (180 + gdg.longitude);
+        }
+        if (target.longitude < 0) {
+            target.targetLongitude = 180 + (180 + target.longitude);
+        }
+
+        if (this.exceedMiddleEarth) {
+            let gdgLongitudeAddition = 180;
+            let targetLongitudeAddition = 180;
+            if (
+                gdg.continentID === ID_CONTINENT_EUROPE ||
+                gdg.continentID === ID_CONTINENT_AFRICA
+            ) {
+                gdgLongitudeAddition = 360;
+            }
+            if (gdg.longitude > 0) {
+                gdg.targetLongitude = gdgLongitudeAddition + gdg.longitude;
+            }
+            if (
+                target.continentID === ID_CONTINENT_EUROPE ||
+                target.continentID === ID_CONTINENT_AFRICA
+            ) {
+                targetLongitudeAddition = 360;
+            }
+            if (target.longitude > 0) {
+                target.targetLongitude =
+                    targetLongitudeAddition + target.longitude;
+            }
+        } else {
+            if (gdg.longitude > 0) {
+                gdg.targetLongitude = gdg.longitude;
+            }
+            if (target.longitude > 0) {
+                target.targetLongitude = target.longitude;
+            }
+        }
+
+        console.log(
+            'reworkd coordinates',
+            this.exceedMiddleEarth,
+            gdg.city,
+            '->',
+            target.city,
+            gdg.longitude,
+            gdg.longitude > 0,
+            gdg.longitude > 0 ? 360 + gdg.longitude : gdg.longitude,
+            '->',
+            gdg.targetLongitude,
+            target.longitude,
+            target.longitude > 0,
+            target.longitude > 0 ? 360 + target.longitude : target.longitude,
+            '->',
+            target.targetLongitude
+        );
     }
 
     render() {
