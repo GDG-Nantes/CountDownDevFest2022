@@ -12,14 +12,21 @@ const ID_CONTINENT_NORTH_AMERICA = 5;
 
 export class WorldMap extends LitElement {
     static styles = css`
+        :host {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr;
+        }
         #map {
-            height: 800px;
+            height: 100%;
+            position: relative;
         }
     `;
 
     static properties = {
         zoom: { type: Number },
-        sizePoint: { type: Number, attribute: 'size-point' },
+        //sizePoint: { type: Number, attribute: 'size-point' },
         continents: { type: Array },
     };
 
@@ -27,7 +34,6 @@ export class WorldMap extends LitElement {
         super();
         this.zoom = 3;
         this.sizePoint = 0.1;
-        this.exceedMiddleEarth = false;
     }
 
     firstUpdated() {
@@ -43,7 +49,6 @@ export class WorldMap extends LitElement {
         super.connectedCallback();
 
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
-        console.log('map', this.mapElt);
         if (this.mapElt) {
             this.map = L.map(this.mapElt).setView([47.23, -1.57], +this.zoom);
             L.tileLayer(
@@ -69,9 +74,6 @@ export class WorldMap extends LitElement {
         gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
         this.showMarkers(this.continents);
-
-        //setTimeout(() => {
-        //}, 2000);
     }
 
     showMarkers(data) {
@@ -135,154 +137,11 @@ export class WorldMap extends LitElement {
                     this.sizePoint * event.target._zoom
                 })`;
             });
-
-            d3Map.selectAll('path.line').attr(
-                'd',
-                d3
-                    .line()
-                    .x((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.x;
-                    })
-                    .y((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.y;
-                    })
-            );
         });
     }
 
     centerToPoint(gdg) {
-        console.log(gdg);
         this.map.setView([gdg.latitude, gdg.targetLongitude]);
-
-        const dataLines = [];
-        for (let targetChapter of gdg.targetChapters) {
-            const line = [];
-            dataLines.push(line);
-            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
-            line.push(gdg);
-            line.push(targetChapter.targetChapter);
-        }
-        console.log(dataLines);
-        const d3Map = d3.select(this.mapElt).select('svg');
-        d3Map
-            .selectAll('.line')
-            .data(dataLines, (d, i) => i)
-            .exit()
-            .remove()
-            .data(dataLines)
-            .enter()
-            .append('path')
-            .attr('id', (d) => d[1].id)
-            .attr('style', 'pointer-events: auto;')
-            .attr('class', 'line')
-            .attr('stroke-width', (d) => 3)
-            .attr('stroke', (d) => 'red')
-            .attr(
-                'd',
-                d3
-                    .line()
-                    .x((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.x;
-                    })
-                    .y((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.y;
-                    })
-            );
-        d3Map
-            .selectAll('.line')
-            .on('click', (d) => {
-                const gdgToTarget =
-                    this.dictionnaryGDGChapters[d.currentTarget.id];
-                console.log('click', gdgToTarget);
-                setTimeout(() => {
-                    if (!this.exceedMiddleEarth && gdgToTarget.longitude < 0) {
-                        this.exceedMiddleEarth = true;
-                    }
-                    this.centerToPoint(gdgToTarget);
-                }, 1000);
-            })
-            .on('mouseover', function (d) {
-                console.log('mouseover', this);
-                d3.select(this).attr('stroke-width', 5);
-            })
-            .on('mouseout', function (d) {
-                d3.select(this).attr('stroke-width', 2);
-            });
-        //.attr('fill', 'none');
-    }
-
-    reworkCoordinatesOfTarget(gdg, target) {
-        if (gdg.longitude < 0) {
-            gdg.targetLongitude = 180 + (180 + gdg.longitude);
-        }
-        if (target.longitude < 0) {
-            target.targetLongitude = 180 + (180 + target.longitude);
-        }
-
-        if (this.exceedMiddleEarth) {
-            let gdgLongitudeAddition = 180;
-            let targetLongitudeAddition = 180;
-            if (
-                gdg.continentID === ID_CONTINENT_EUROPE ||
-                gdg.continentID === ID_CONTINENT_AFRICA
-            ) {
-                gdgLongitudeAddition = 360;
-            }
-            if (gdg.longitude > 0) {
-                gdg.targetLongitude = gdgLongitudeAddition + gdg.longitude;
-            }
-            if (
-                target.continentID === ID_CONTINENT_EUROPE ||
-                target.continentID === ID_CONTINENT_AFRICA
-            ) {
-                targetLongitudeAddition = 360;
-            }
-            if (target.longitude > 0) {
-                target.targetLongitude =
-                    targetLongitudeAddition + target.longitude;
-            }
-        } else {
-            if (gdg.longitude > 0) {
-                gdg.targetLongitude = gdg.longitude;
-            }
-            if (target.longitude > 0) {
-                target.targetLongitude = target.longitude;
-            }
-        }
-
-        console.log(
-            'reworkd coordinates',
-            this.exceedMiddleEarth,
-            gdg.city,
-            '->',
-            target.city,
-            gdg.longitude,
-            gdg.longitude > 0,
-            gdg.longitude > 0 ? 360 + gdg.longitude : gdg.longitude,
-            '->',
-            gdg.targetLongitude,
-            target.longitude,
-            target.longitude > 0,
-            target.longitude > 0 ? 360 + target.longitude : target.longitude,
-            '->',
-            target.targetLongitude
-        );
     }
 
     render() {

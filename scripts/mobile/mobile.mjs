@@ -4,6 +4,7 @@ import { HorseGame } from './games/horse.mjs';
 import { BaloonGame } from './games/baloon.mjs';
 import { SubmarineGame } from './games/submarine.mjs';
 import { BoatGame } from './games/boat.mjs';
+import { WorldMapMobile } from '../countdown/map-mobile.mjs';
 
 const GAME_TRAIN = 1;
 const GAME_HORSE = 2;
@@ -26,9 +27,14 @@ export class Mobile extends LitElement {
             padding: 0;
             top: 0;
             left: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 100px;
         }
         .buttons-area {
-            position: absolute;
+            position: relative;
+            top: 40px;
+            //position: absolute;
         }
     `;
 
@@ -38,13 +44,11 @@ export class Mobile extends LitElement {
 
     render() {
         return html`
-            <p>Hello from mobile</p>
             ${this.game === 0
                 ? html`
-                      <world-map
+                      <world-map-mobile
                           zoom="10"
-                          size-point=".3"
-                          .continents=${this.continents}></world-map>
+                          .continents=${this.continents}></world-map-mobile>
                       <div class="buttons-area">
                           <button @click="${() => this.selectGame(GAME_TRAIN)}">
                               Train Game
@@ -53,9 +57,9 @@ export class Mobile extends LitElement {
                               Horse Game
                           </button>
                           <button
-                              @click="${() =>
-                                  this.selectGame(GAME_BALOON)}"></button>
-                          Baloon Game
+                              @click="${() => this.selectGame(GAME_BALOON)}">
+                              Baloon Game
+                          </button>
                           <button
                               @click="${() => this.selectGame(GAME_SUBMARINE)}">
                               Submarine Game
