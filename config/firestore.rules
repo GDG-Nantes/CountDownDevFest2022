@@ -1,0 +1,20 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isAdmin() {
+      return request.auth != null
+      	&& get(/databases/$(database)/documents/config/admins).data[request.auth.token.email] == true
+      	&& request.auth.token.email_verified == true;
+    }
+
+    match /config {
+      allow read: if isAdmin();
+      allow write, delete, update: if false;
+    }
+
+    match /travel/{travelId} {
+      allow update, delete: if request.auth.uid == travelId
+        || isAdmin();
+      allow read, create: if request.auth.uid != null;
+    }
+  }
+}

@@ -106,3 +106,4 @@ dist
 
 build
 config/secrets.mjs
+scripts/firebase/firebase-config.mjs

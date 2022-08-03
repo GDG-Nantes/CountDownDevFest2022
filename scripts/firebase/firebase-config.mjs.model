@@ -1,0 +1,10 @@
+const config = {
+    apiKey: '----myApiKey----',
+    authDomain: 'worldtour.gdgnantes.com',
+    databaseURL: 'https://devfestnantes2022.firebaseio.com',
+    projectId: 'devfestnantes2022',
+    storageBucket: 'devfestnantes2022.appspot.com',
+    messagingSenderId: '--mySenderId--',
+};
+
+export default config;

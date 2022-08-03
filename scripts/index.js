@@ -2,6 +2,8 @@ import { LitElement, html } from 'lit';
 import { CountDown } from './countdown/countdown';
 import { Mobile } from './mobile/mobile';
 import { prepareData } from './preparation/prepare-data.mjs';
+import { firebaseApp } from './firebase/config.mjs';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 class Main extends LitElement {
     constructor() {
@@ -11,6 +13,17 @@ class Main extends LitElement {
             console.log(continents);
             this.continents = continents;
             this.requestUpdate();
+        });
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('userLogged');
+            } else {
+                console.log('userNotLogged');
+            }
+            //https://firebase.google.com/docs/auth/web/start
+            //https://firebase.google.com/docs/firestore/quickstart
+            //https://firebase.google.com/docs/auth/web/firebaseui
         });
     }
 
