@@ -78,7 +78,7 @@ export class WorldMapMobile extends LitElement {
             ];
         gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
-        this.showMarkers(this.continents);
+        //this.showMarkers(this.continents);
 
         //setTimeout(() => {
         //}, 2000);
@@ -173,15 +173,99 @@ export class WorldMapMobile extends LitElement {
         this.map.setView([gdg.latitude, gdg.targetLongitude]);
 
         const dataLines = [];
+        const markers = [];
+        markers.push({
+            latitude: gdg.latitude,
+            longitude: gdg.longitude,
+            targetLongitude: gdg.targetLongitude,
+        });
         for (let targetChapter of gdg.targetChapters) {
             const line = [];
             dataLines.push(line);
             this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
             line.push(gdg);
             line.push(targetChapter.targetChapter);
+            markers.push({
+                latitude: targetChapter.targetChapter.latitude,
+                longitude: targetChapter.targetChapter.longitude,
+                targetLongitude: targetChapter.targetChapter.targetLongitude,
+            });
         }
-        console.log(dataLines);
+
         const d3Map = d3.select(this.mapElt).select('svg');
+        d3Map.selectAll('.marker').remove();
+        d3Map
+            .selectAll('myPlaces')
+            .data(markers)
+            .enter()
+            .append('svg:path')
+            .attr('class', 'marker')
+            .attr(
+                'd',
+                'M0,0l-8.8-17.7C-12.1-24.3-7.4-32,0-32h0c7.4,0,12.1,7.7,8.8,14.3L0,0z'
+            )
+            .attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.targetLongitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return 'translate(' + x + ',' + y + ') scale(0)';
+            })
+            .transition()
+            .delay(400)
+            .duration(800)
+            //.ease('elastic')
+            .attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.targetLongitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return `translate(${x},${y}) scale(${
+                    this.sizePoint * this.zoom
+                })`;
+            });
+
+        this.map.on('moveend', (event) => {
+            const d3Map = d3.select(this.mapElt).select('svg');
+            d3Map.selectAll('path.marker').attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.targetLongitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return `translate(${x},${y}) scale(${
+                    this.sizePoint * event.target._zoom
+                })`;
+            });
+
+            d3Map.selectAll('path.line').attr(
+                'd',
+                d3
+                    .line()
+                    .x((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.targetLongitude,
+                        ]);
+                        return proj.x;
+                    })
+                    .y((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.targetLongitude,
+                        ]);
+                        return proj.y;
+                    })
+            );
+        });
+
+        console.log(dataLines);
+        //const d3Map = d3.select(this.mapElt).select('svg');
         d3Map
             .selectAll('.line')
             .data(dataLines, (d, i) => i)
