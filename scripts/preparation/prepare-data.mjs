@@ -48,22 +48,14 @@ export function prepareData() {
 
                             // If we are on the same city
                             const distanceChapters = distance(
+                                continentA.id,
+                                continentB.id,
                                 chapterA,
                                 chapterB
                             );
                             if (distanceChapters === 0) {
                                 continue;
                             }
-                            if (chapterA.id === 36)
-                                console.log(
-                                    chapterA.id,
-                                    chapterA.city,
-                                    longitudeA,
-                                    chapterB.id,
-                                    chapterB.city,
-                                    longitudeB,
-                                    distanceChapters
-                                );
 
                             if (!chapterA.targetChapters) {
                                 chapterA.targetChapters = [];
@@ -211,11 +203,43 @@ function find_angle(A, B, C) {
     return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB));
 }
 
-function distance(A, B) {
-    var a = A.latitude + 90 - (B.latitude + 90);
-    var b =
-        (A.longitude < 0 ? 180 + (180 + A.longitude) : A.longitude) -
-        (B.longitude < 0 ? 180 + (180 + B.longitude) : B.longitude);
+function distance(continentAId, continentBId, A, B) {
+    const arrayEuropeAfrica = [ID_CONTINENT_EUROPE, ID_CONTINENT_AFRICA];
+    const arrayAmerica = [
+        ID_CONTINENT_NORTH_AMERICA,
+        ID_CONTINENT_SOUTH_AMERICA,
+    ];
+    let additionLongitudeA = 0;
+    let additionLongitudeB = 0;
+    let bLength = 999;
+    // We have to take care of speficics of maps, a part of europe as negative longtitude going to positive numbers (Nantes ~= -1 Strasbourg ~= 1)
+    // Same thing with asia going to america
+    if (
+        arrayEuropeAfrica.includes(continentAId) &&
+        arrayEuropeAfrica.includes(continentBId)
+    ) {
+        additionLongitudeA = 180;
+        additionLongitudeB = 180;
+    } else if (
+        continentAId === ID_CONTINENT_ASIA &&
+        arrayAmerica.includes(continentBId)
+    ) {
+        additionLongitudeA = 180;
+        const factorLongitudeA = -1;
+        additionLongitudeB = 180;
+        bLength =
+            A.longitude * factorLongitudeA +
+            additionLongitudeA +
+            (B.longitude + additionLongitudeB);
+    }
+
+    const a = A.latitude + 90 - (B.latitude + 90);
+    const b =
+        bLength !== 999
+            ? bLength
+            : A.longitude +
+              additionLongitudeA -
+              (B.longitude + additionLongitudeB);
 
     return Math.sqrt(a * a + b * b);
 }
