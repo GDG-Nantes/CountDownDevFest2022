@@ -22,12 +22,16 @@ export class CountDown extends LitElement {
 
     static properties = {
         continents: { type: Array },
+        service: { type: Object },
     };
 
     render() {
         return html`
             <p>Hello from lit</p>
-            <world-map zoom="3" .continents=${this.continents}></world-map>
+            <world-map
+                zoom="3"
+                .continents=${this.continents}
+                .service=${this.service}></world-map>
         `;
     }
 }

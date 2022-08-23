@@ -1,3 +1,71 @@
-#map {
-    height: 180px;
+:root {
+    --primary: #c14d32;
+    --secondary: #346369;
+    --primary-dark: #19393b;
+    --tertiary: #ffedbf;
+    --tertiary-dark: #f8dda2;
+    --tertiary-darker: #f8dda2ac;
+}
+
+/**
+Web Fonts declaration
+**/
+
+///
+////////ROBOTO
+///
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-ThinItalic.ttf') format('truetype');
+    font-weight: 200;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-LightItalic.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-MediumItalic.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-BlackItalic.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Roboto';
+    src: url('../assets/fonts/Roboto-Thin.ttf') format('truetype');
+    font-weight: 200;
+}
+
+///
+////////Rumble Brave
+///
+@font-face {
+    font-family: 'RumbleBrave';
+    src: url('../assets/fonts/Rumble-Brave.otf') format('truetype');
+}
+
+html,
+body {
+    font-family: 'Roboto';
 }

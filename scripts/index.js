@@ -1,31 +1,50 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { CountDown } from './countdown/countdown';
 import { Mobile } from './mobile/mobile';
 import { prepareData } from './preparation/prepare-data.mjs';
 import { firebaseApp } from './firebase/config.mjs';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
+import { GlobalService } from './services/global-service.mjs';
 class Main extends LitElement {
     constructor() {
         super();
         this.continents = undefined;
+        this.service = new GlobalService();
+        this.logged = undefined;
         prepareData().then((continents) => {
-            console.log(continents);
             this.continents = continents;
             this.requestUpdate();
         });
-        const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
+
+        this.service.checkLogin((user) => {
             if (user) {
-                console.log('userLogged');
+                this.logged = user;
+                console.log('userLogged', this.logged);
+                this.requestUpdate();
             } else {
+                this.service.login();
                 console.log('userNotLogged');
             }
-            //https://firebase.google.com/docs/auth/web/start
-            //https://firebase.google.com/docs/firestore/quickstart
-            //https://firebase.google.com/docs/auth/web/firebaseui
         });
     }
+
+    static styles = css`
+        :host {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            top: 0;
+            left: 0;
+            background: linear-gradient(
+                var(--tertiary-dark) 0,
+                var(--tertiary) 30%,
+                var(--tertiary) 70%,
+                var(--tertiary-dark) 100%
+            );
+        }
+    `;
 
     /**
      *
@@ -35,13 +54,19 @@ class Main extends LitElement {
         return !window.matchMedia('(min-width: 600px)').matches;
     }
 
+    renderGame() {
+        return html` ${this.isMobile()
+            ? html`<count-down-mobile
+                  .continents=${this.continents}
+                  .service=${this.service}></count-down-mobile>`
+            : html`<count-down
+                  .continents=${this.continents}
+                  .service=${this.service}></count-down>`}`;
+    }
+
     render() {
         return html`${this.continents
-            ? html`${this.isMobile()
-                  ? html`<count-down-mobile
-                        .continents=${this.continents}></count-down-mobile>`
-                  : html`<count-down
-                        .continents=${this.continents}></count-down>`}`
+            ? html`${this.logged ? this.renderGame() : html`login...`}`
             : html`loading...`}`;
     }
 }

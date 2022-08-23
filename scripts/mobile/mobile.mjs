@@ -29,7 +29,18 @@ export class Mobile extends LitElement {
             left: 0;
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: 1fr 100px;
+            grid-template-rows: 50px 1fr 100px;
+            font-family: 'RumbleBrave';
+        }
+        header {
+            background-color: rgb(193, 77, 50);
+            height: 50px;
+            position: relative;
+        }
+        img {
+            height: 50px;
+            position: absolute;
+            right: 0;
         }
         .buttons-area {
             position: relative;
@@ -40,15 +51,22 @@ export class Mobile extends LitElement {
 
     static properties = {
         continents: { type: Array },
+        service: { type: Object },
     };
 
     render() {
         return html`
             ${this.game === 0
                 ? html`
+                      <header>
+                          <img
+                              src="${this.service.getUser().photoURL}"
+                              referrerpolicy="no-referrer" />
+                      </header>
                       <world-map-mobile
                           zoom="10"
-                          .continents=${this.continents}></world-map-mobile>
+                          .continents=${this.continents}
+                          .service=${this.service}></world-map-mobile>
                       <div class="buttons-area">
                           <button @click="${() => this.selectGame(GAME_TRAIN)}">
                               Train Game

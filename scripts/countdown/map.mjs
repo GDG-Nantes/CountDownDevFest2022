@@ -28,6 +28,7 @@ export class WorldMap extends LitElement {
         zoom: { type: Number },
         //sizePoint: { type: Number, attribute: 'size-point' },
         continents: { type: Array },
+        service: { type: Object },
     };
 
     constructor() {
@@ -37,6 +38,7 @@ export class WorldMap extends LitElement {
     }
 
     firstUpdated() {
+        this.service.watchUpdatePositions(this.updateCallback.bind(this));
         this.dictionnaryGDGChapters = {};
         for (let continent of this.continents) {
             for (let chapter of continent.chapters) {
@@ -45,7 +47,6 @@ export class WorldMap extends LitElement {
             }
         }
 
-        console.log('firstUpdated');
         super.connectedCallback();
 
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
@@ -74,6 +75,20 @@ export class WorldMap extends LitElement {
         gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
         this.showMarkers(this.continents);
+    }
+
+    updateCallback(documentUpdate) {
+        var greenIcon = L.icon({
+            iconUrl: documentUpdate.photoURL,
+
+            iconSize: [38, 95], // size of the icon
+            shadowSize: [50, 64], // size of the shadow
+            iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+        });
+        //const d3Map = d3.select(this.mapElt).select('svg');
+        L.marker([documentUpdate.latitude, documentUpdate.targetLongitude], {
+            icon: greenIcon,
+        }).addTo(this.map);
     }
 
     showMarkers(data) {
@@ -145,7 +160,6 @@ export class WorldMap extends LitElement {
     }
 
     render() {
-        console.log('render');
         return html`
             <link
                 rel="stylesheet"

@@ -30,6 +30,7 @@ export class WorldMapMobile extends LitElement {
         zoom: { type: Number },
         //sizePoint: { type: Number, attribute: 'size-point' },
         continents: { type: Array },
+        service: { type: Object },
     };
 
     constructor() {
@@ -38,6 +39,7 @@ export class WorldMapMobile extends LitElement {
         this.sizePoint = 0.3;
         this.exceedMiddleEarth = false;
         this.destination = null;
+        this.firstPassedToPositiveLongitude = false;
     }
 
     firstUpdated() {
@@ -49,11 +51,9 @@ export class WorldMapMobile extends LitElement {
             }
         }
 
-        console.log('firstUpdated');
         super.connectedCallback();
 
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
-        console.log('map', this.mapElt);
         if (this.mapElt) {
             this.map = L.map(this.mapElt).setView([47.23, -1.57], +this.zoom);
             L.tileLayer(
@@ -72,12 +72,24 @@ export class WorldMapMobile extends LitElement {
             // Add a svg layer to the map
             L.svg().addTo(this.map);
         }
-        const gdg =
+        const idGDGNantes = 669;
+        let gdgNantes = undefined;
+        for (let gdgTmp of this.continents[2].chapters) {
+            if (gdgTmp.id === idGDGNantes) {
+                gdgNantes = gdgTmp;
+            }
+        }
+        /*const gdg =
             this.continents[2].chapters[
                 Math.round(Math.random() * this.continents[2].chapters.length)
             ];
-        gdg.targetLongitude = gdg.longitude;
-        this.centerToPoint(gdg);
+        for (let gdgTmp of this.continents[2].chapters) {
+            if (gdgTmp.city === 'Nantes') {
+                console.log(gdgTmp);
+            }
+        }*/
+        gdgNantes.targetLongitude = gdgNantes.longitude;
+        this.centerToPoint(gdgNantes);
         //this.showMarkers(this.continents);
 
         //setTimeout(() => {
@@ -95,7 +107,6 @@ export class WorldMapMobile extends LitElement {
                 markers.push({ latitude, longitude, targetLongitude });
             }
         }
-
         const d3Map = d3.select(this.mapElt).select('svg');
         d3Map
             .selectAll('myPlaces')
@@ -135,6 +146,7 @@ export class WorldMapMobile extends LitElement {
         this.map.on('moveend', (event) => {
             const d3Map = d3.select(this.mapElt).select('svg');
             d3Map.selectAll('path.marker').attr('transform', (d) => {
+                console.log('moveEnd', d);
                 let proj = this.map.latLngToLayerPoint([
                     d.latitude,
                     d.longitude,
@@ -169,6 +181,7 @@ export class WorldMapMobile extends LitElement {
     }
 
     centerToPoint(gdg) {
+        this.service.updatePosition(gdg).then(() => console.log('good'));
         console.log(gdg);
         this.map.setView([gdg.latitude, gdg.targetLongitude]);
 
@@ -192,6 +205,7 @@ export class WorldMapMobile extends LitElement {
             });
         }
 
+        console.log('markers', markers);
         const d3Map = d3.select(this.mapElt).select('svg');
         d3Map.selectAll('.marker').remove();
         d3Map
@@ -264,7 +278,6 @@ export class WorldMapMobile extends LitElement {
             );
         });
 
-        console.log(dataLines);
         //const d3Map = d3.select(this.mapElt).select('svg');
         d3Map
             .selectAll('.line')
@@ -301,16 +314,27 @@ export class WorldMapMobile extends LitElement {
         d3Map
             .selectAll('.line')
             .on('click', (d) => {
-                console.log('click', d, this);
                 const gdgToTarget =
                     this.dictionnaryGDGChapters[d.currentTarget.id];
                 if (
                     this.destination &&
                     this.destination.id === gdgToTarget.id
                 ) {
-                    if (!this.exceedMiddleEarth && gdgToTarget.longitude < 0) {
+                    if (
+                        this.firstPassedToPositiveLongitude &&
+                        !this.exceedMiddleEarth &&
+                        gdgToTarget.longitude < 0
+                    ) {
                         this.exceedMiddleEarth = true;
                     }
+                    console.log(
+                        this.firstPassedToPositiveLongitude,
+                        gdgToTarget
+                    );
+                    this.firstPassedToPositiveLongitude =
+                        this.firstPassedToPositiveLongitude ||
+                        gdgToTarget.longitude > 0;
+                    console.log(this.firstPassedToPositiveLongitude);
                     this.centerToPoint(gdgToTarget);
                     this.destination = null;
                     this.requestUpdate();
@@ -320,7 +344,6 @@ export class WorldMapMobile extends LitElement {
                 }
             })
             .on('mouseover', function (d) {
-                console.log('mouseover', this);
                 d3.select(this).attr('stroke-width', 5);
             })
             .on('mouseout', function (d) {
@@ -330,10 +353,10 @@ export class WorldMapMobile extends LitElement {
     }
 
     reworkCoordinatesOfTarget(gdg, target) {
-        if (gdg.longitude < 0) {
+        if (gdg.longitude < 0 && this.firstPassedToPositiveLongitude) {
             gdg.targetLongitude = 180 + (180 + gdg.longitude);
         }
-        if (target.longitude < 0) {
+        if (target.longitude < 0 && this.firstPassedToPositiveLongitude) {
             target.targetLongitude = 180 + (180 + target.longitude);
         }
 
@@ -360,16 +383,17 @@ export class WorldMapMobile extends LitElement {
                     targetLongitudeAddition + target.longitude;
             }
         } else {
-            if (gdg.longitude > 0) {
+            if (gdg.longitude > 0 || !this.firstPassedToPositiveLongitude) {
                 gdg.targetLongitude = gdg.longitude;
             }
-            if (target.longitude > 0) {
+            if (target.longitude > 0 || !this.firstPassedToPositiveLongitude) {
                 target.targetLongitude = target.longitude;
             }
         }
 
-        console.log(
+        /*console.log(
             'reworkd coordinates',
+            this.firstPassedToPositiveLongitude,
             this.exceedMiddleEarth,
             gdg.city,
             '->',
@@ -384,11 +408,10 @@ export class WorldMapMobile extends LitElement {
             target.longitude > 0 ? 360 + target.longitude : target.longitude,
             '->',
             target.targetLongitude
-        );
+        );*/
     }
 
     render() {
-        console.log('render');
         return html`
             <link
                 rel="stylesheet"
