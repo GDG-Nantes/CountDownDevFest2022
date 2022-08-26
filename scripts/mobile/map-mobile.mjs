@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import * as L from 'leaflet';
 import { LEAFLET_TOKEN } from '../../config/secrets.mjs';
 import { csvParse } from 'd3';
+import { calculateDistanceBetweenToPoints } from '../services/helpers.mjs';
 
 const ID_CONTINENT_AFRICA = 1;
 const ID_CONTINENT_EUROPE = 2;
@@ -36,7 +37,7 @@ export class WorldMapMobile extends LitElement {
     constructor() {
         super();
         this.zoom = 10;
-        this.sizePoint = 0.3;
+        this.sizePoint = 0.2;
         this.exceedMiddleEarth = false;
         this.destination = null;
         this.firstPassedToPositiveLongitude = false;
@@ -168,33 +169,7 @@ export class WorldMapMobile extends LitElement {
         });
     }
 
-    centerToPoint(gdg) {
-        this.service.updatePosition(gdg).then(() => console.log('good'));
-        console.log(gdg);
-        this.map.setView([gdg.latitude, gdg.targetLongitude]);
-
-        const dataLines = [];
-        const markers = [];
-        markers.push({
-            latitude: gdg.latitude,
-            longitude: gdg.longitude,
-            targetLongitude: gdg.targetLongitude,
-        });
-        for (let targetChapter of gdg.targetChapters) {
-            const line = [];
-            dataLines.push(line);
-            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
-            line.push(gdg);
-            line.push(targetChapter.targetChapter);
-            markers.push({
-                latitude: targetChapter.targetChapter.latitude,
-                longitude: targetChapter.targetChapter.longitude,
-                targetLongitude: targetChapter.targetChapter.targetLongitude,
-            });
-        }
-
-        console.log('markers', markers);
-        const d3Map = d3.select(this.mapElt).select('svg');
+    drawMarkers(d3Map, markers) {
         d3Map.selectAll('.marker').remove();
         d3Map
             .selectAll('myPlaces')
@@ -206,6 +181,7 @@ export class WorldMapMobile extends LitElement {
                 'd',
                 'M0,0l-8.8-17.7C-12.1-24.3-7.4-32,0-32h0c7.4,0,12.1,7.7,8.8,14.3L0,0z'
             )
+            .attr('fill', 'var(--secondary)')
             .attr('transform', (d) => {
                 let proj = this.map.latLngToLayerPoint([
                     d.latitude,
@@ -230,43 +206,9 @@ export class WorldMapMobile extends LitElement {
                     this.sizePoint * this.zoom
                 })`;
             });
+    }
 
-        this.map.on('moveend', (event) => {
-            const d3Map = d3.select(this.mapElt).select('svg');
-            d3Map.selectAll('path.marker').attr('transform', (d) => {
-                let proj = this.map.latLngToLayerPoint([
-                    d.latitude,
-                    d.targetLongitude,
-                ]);
-                let x = proj.x;
-                let y = proj.y;
-                return `translate(${x},${y}) scale(${
-                    this.sizePoint * event.target._zoom
-                })`;
-            });
-
-            d3Map.selectAll('path.line').attr(
-                'd',
-                d3
-                    .line()
-                    .x((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.x;
-                    })
-                    .y((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.y;
-                    })
-            );
-        });
-
-        //const d3Map = d3.select(this.mapElt).select('svg');
+    drawLines(d3Map, dataLines) {
         d3Map
             .selectAll('.line')
             .data(dataLines, (d, i) => i)
@@ -278,8 +220,8 @@ export class WorldMapMobile extends LitElement {
             .attr('id', (d) => d[1].id)
             .attr('style', 'pointer-events: auto;')
             .attr('class', 'line')
-            .attr('stroke-width', (d) => 3)
-            .attr('stroke', (d) => 'red')
+            .attr('stroke-width', 3)
+            .attr('stroke', 'var(--primary)')
             .attr(
                 'd',
                 d3
@@ -327,17 +269,97 @@ export class WorldMapMobile extends LitElement {
                     this.destination = null;
                     this.requestUpdate();
                 } else {
-                    this.destination = gdgToTarget;
+                    this.destination = {
+                        ...gdgToTarget,
+                        distance: d.currentTarget.__data__[1].distance,
+                    };
                     this.requestUpdate();
                 }
             })
             .on('mouseover', function (d) {
-                d3.select(this).attr('stroke-width', 5);
+                d3.select(this)
+                    .attr('stroke-width', 7)
+                    .attr('stroke', 'var(--primary-dark)');
             })
             .on('mouseout', function (d) {
-                d3.select(this).attr('stroke-width', 2);
+                d3.select(this)
+                    .attr('stroke-width', 3)
+                    .attr('stroke', 'var(--primary)');
             });
-        //.attr('fill', 'none');
+    }
+
+    centerToPoint(gdg) {
+        this.service.updatePosition(gdg).then(() => console.log('good'));
+        console.log(gdg);
+        this.map.setView([gdg.latitude, gdg.targetLongitude]);
+
+        const dataLines = [];
+        const markers = [];
+        markers.push({
+            latitude: gdg.latitude,
+            longitude: gdg.longitude,
+            targetLongitude: gdg.targetLongitude,
+        });
+        for (let targetChapter of gdg.targetChapters) {
+            const line = [];
+            dataLines.push(line);
+            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
+            line.push(gdg);
+            line.push({
+                ...targetChapter.targetChapter,
+                distance: calculateDistanceBetweenToPoints(
+                    gdg,
+                    targetChapter.targetChapter
+                ),
+            });
+            markers.push({
+                latitude: targetChapter.targetChapter.latitude,
+                longitude: targetChapter.targetChapter.longitude,
+                targetLongitude: targetChapter.targetChapter.targetLongitude,
+            });
+        }
+
+        console.log('markers', markers);
+        const d3Map = d3.select(this.mapElt).select('svg');
+
+        this.drawLines(d3Map, dataLines);
+        this.drawMarkers(d3Map, markers);
+
+        this.map.on('moveend', (event) => {
+            const d3Map = d3.select(this.mapElt).select('svg');
+            d3Map.selectAll('path.marker').attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.targetLongitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                this.zoom = event.target._zoom;
+                return `translate(${x},${y}) scale(${
+                    this.sizePoint * event.target._zoom
+                })`;
+            });
+
+            d3Map.selectAll('path.line').attr(
+                'd',
+                d3
+                    .line()
+                    .x((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.targetLongitude,
+                        ]);
+                        return proj.x;
+                    })
+                    .y((d) => {
+                        let proj = this.map.latLngToLayerPoint([
+                            d.latitude,
+                            d.targetLongitude,
+                        ]);
+                        return proj.y;
+                    })
+            );
+        });
     }
 
     reworkCoordinatesOfTarget(gdg, target) {
@@ -411,7 +433,7 @@ export class WorldMapMobile extends LitElement {
             <div id="destination">
                 Destination:
                 ${this.destination
-                    ? `${this.destination.city} (${this.destination.country})`
+                    ? `${this.destination.city} (${this.destination.country}) -> ${this.destination.distance} km`
                     : ''}
             </div>
         `;
