@@ -10,6 +10,8 @@ const ID_CONTINENT_ASIA = 3;
 const ID_CONTINENT_SOUTH_AMERICA = 4;
 const ID_CONTINENT_NORTH_AMERICA = 5;
 
+const CIRCLE_RADIUS = 50;
+
 export class WorldMap extends LitElement {
     static styles = css`
         :host {
@@ -34,7 +36,9 @@ export class WorldMap extends LitElement {
     constructor() {
         super();
         this.zoom = 3;
-        this.sizePoint = 0.1;
+        this.sizePoint = 0.1; //0.1;
+        this.userList = [];
+        this.userMap = new Map();
     }
 
     firstUpdated() {
@@ -74,21 +78,78 @@ export class WorldMap extends LitElement {
             ];
         gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
-        this.showMarkers(this.continents);
+        this.prepareSvg();
+        //this.showMarkers(this.continents);
     }
 
-    updateCallback(documentUpdate) {
-        var greenIcon = L.icon({
-            iconUrl: documentUpdate.photoURL,
+    prepareSvg() {
+        d3.select(this.mapElt)
+            .select('svg')
+            .append('defs')
+            .append('clipPath')
+            .attr('id', 'markerUserClipPath')
+            .append('circle')
+            .attr('cx', CIRCLE_RADIUS)
+            .attr('cy', CIRCLE_RADIUS)
+            .attr('r', CIRCLE_RADIUS - 10);
+    }
 
-            iconSize: [38, 95], // size of the icon
-            shadowSize: [50, 64], // size of the shadow
-            iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    showUsers(users) {
+        const d3Map = d3.select(this.mapElt).select('svg');
+        const usersMarkers = d3Map
+            .selectAll('image.users')
+            .data(users, (user) => console.log(user) || user.id);
+
+        usersMarkers.exit().remove();
+
+        usersMarkers
+            .enter()
+            .append('image')
+            .attr('id', (d) => d.id)
+            .attr('class', 'users')
+            .attr('xlink:href', (d) => d.photoUser)
+            .attr('transform', (d) => {
+                let proj = this.map.latLngToLayerPoint([
+                    d.latitude,
+                    d.longitude,
+                ]);
+                let x = proj.x;
+                let y = proj.y;
+                return `translate(${x - CIRCLE_RADIUS / 4},${
+                    y - CIRCLE_RADIUS / 4
+                }) scale(${this.sizePoint * this.zoom})`;
+            })
+            .attr('clip-path', 'url(#markerUserClipPath)')
+            .merge(usersMarkers)
+            .transition()
+            .attr('transform', (d) => {
+                if (d) {
+                    let proj = this.map.latLngToLayerPoint([
+                        d.latitude,
+                        d.longitude,
+                    ]);
+                    let x = proj.x;
+                    let y = proj.y;
+                    return `translate(${x - CIRCLE_RADIUS / 4},${
+                        y - CIRCLE_RADIUS / 4
+                    }) scale(${this.sizePoint * this.zoom})`;
+                } else {
+                    return;
+                }
+            });
+    }
+
+    transformUserMap() {}
+
+    updateCallback(documentUpdate) {
+        console.log('Map recieve update', documentUpdate);
+        this.userMap.set(documentUpdate.uid, {
+            id: documentUpdate.uid,
+            photoUser: documentUpdate.base64,
+            latitude: documentUpdate.latitude,
+            longitude: documentUpdate.targetLongitude,
         });
-        //const d3Map = d3.select(this.mapElt).select('svg');
-        L.marker([documentUpdate.latitude, documentUpdate.targetLongitude], {
-            icon: greenIcon,
-        }).addTo(this.map);
+        this.showUsers([...this.userMap.values()]);
     }
 
     showMarkers(data) {

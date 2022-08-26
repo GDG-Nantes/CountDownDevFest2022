@@ -17,6 +17,7 @@ import {
     getAuth,
     onAuthStateChanged,
 } from 'firebase/auth';
+import { toDataURL } from './helpers.mjs';
 
 export class GlobalService {
     constructor() {
@@ -100,22 +101,25 @@ export class GlobalService {
     updatePosition(gdg) {
         console.log('Update position for gdg', this.user, gdg);
         return new Promise((resolve, reject) => {
-            console.log(this.user);
-            setDoc(doc(this.db, 'travel', this.user.uid), {
-                uid: this.user.uid,
-                photoURL: this.user.photoURL,
-                longitude: gdg.longitude,
-                latitude: gdg.latitude,
-                targetLongitude: gdg.targetLongitude,
-            })
-                .then(() => {
-                    console.log('Write new position');
-                    resolve(true);
+            toDataURL(this.user.photoURL).then((base64User) => {
+                setDoc(doc(this.db, 'travel', this.user.uid), {
+                    uid: this.user.uid,
+                    photoURL: this.user.photoURL,
+                    base64: base64User,
+                    longitude: gdg.longitude,
+                    latitude: gdg.latitude,
+                    targetLongitude: gdg.targetLongitude,
                 })
-                .catch((err) => {
-                    console.log('error', err);
-                    reject(err);
-                });
+                    .then(() => {
+                        console.log('Write new position');
+                        resolve(true);
+                    })
+                    .catch((err) => {
+                        console.log('error', err);
+                        reject(err);
+                    });
+            });
+            console.log(this.user);
         });
     }
 
