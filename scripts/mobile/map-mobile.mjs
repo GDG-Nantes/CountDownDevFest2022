@@ -79,21 +79,9 @@ export class WorldMapMobile extends LitElement {
                 gdgNantes = gdgTmp;
             }
         }
-        /*const gdg =
-            this.continents[2].chapters[
-                Math.round(Math.random() * this.continents[2].chapters.length)
-            ];
-        for (let gdgTmp of this.continents[2].chapters) {
-            if (gdgTmp.city === 'Nantes') {
-                console.log(gdgTmp);
-            }
-        }*/
-        gdgNantes.targetLongitude = gdgNantes.longitude;
-        this.centerToPoint(gdgNantes);
-        //this.showMarkers(this.continents);
 
-        //setTimeout(() => {
-        //}, 2000);
+        gdgNantes.targetLongitude = gdgNantes.longitude;
+        this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
     }
 
     showMarkers(data) {

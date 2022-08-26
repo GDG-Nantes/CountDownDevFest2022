@@ -22,10 +22,19 @@ import { toDataURL } from './helpers.mjs';
 export class GlobalService {
     constructor() {
         this.db = getFirestore(firebaseApp);
+        this.currentGDG = undefined;
     }
 
     getUser() {
         return this.user;
+    }
+
+    getCurrentGDG() {
+        return this.currentGDG;
+    }
+
+    resetCurrentGDG() {
+        this.currentGDG = undefined;
     }
 
     checkLogin(callBackUser) {
@@ -99,9 +108,9 @@ export class GlobalService {
     }
 
     updatePosition(gdg) {
-        console.log('Update position for gdg', this.user, gdg);
-        return new Promise((resolve, reject) => {
-            toDataURL(this.user.photoURL).then((base64User) => {
+        this.currentGDG = gdg;
+        return new Promise((resolve, reject) =>
+            toDataURL(this.user.photoURL).then((base64User) =>
                 setDoc(doc(this.db, 'travel', this.user.uid), {
                     uid: this.user.uid,
                     photoURL: this.user.photoURL,
@@ -117,10 +126,9 @@ export class GlobalService {
                     .catch((err) => {
                         console.log('error', err);
                         reject(err);
-                    });
-            });
-            console.log(this.user);
-        });
+                    })
+            )
+        );
     }
 
     watchUpdatePositions(callBack) {
