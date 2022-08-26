@@ -147,7 +147,7 @@ export class WorldMap extends LitElement {
             id: documentUpdate.uid,
             photoUser: documentUpdate.base64,
             latitude: documentUpdate.latitude,
-            longitude: documentUpdate.targetLongitude,
+            longitude: documentUpdate.longitude,
         });
         this.showUsers([...this.userMap.values()]);
     }
