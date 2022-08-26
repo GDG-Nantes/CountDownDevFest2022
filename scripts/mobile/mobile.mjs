@@ -4,7 +4,7 @@ import { HorseGame } from './games/horse.mjs';
 import { BaloonGame } from './games/baloon.mjs';
 import { SubmarineGame } from './games/submarine.mjs';
 import { BoatGame } from './games/boat.mjs';
-import { WorldMapMobile } from '../countdown/map-mobile.mjs';
+import { WorldMapMobile } from './map-mobile.mjs';
 
 const GAME_TRAIN = 1;
 const GAME_HORSE = 2;
