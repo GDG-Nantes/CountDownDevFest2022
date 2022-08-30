@@ -16,6 +16,9 @@ export function prepareData() {
         .then((arrayContinents) => {
             for (let continentA of arrayContinents) {
                 for (let chapterA of continentA.chapters) {
+                    if (!chapterA.targetChapters) {
+                        chapterA.targetChapters = [];
+                    }
                     for (let continentB of arrayContinents) {
                         for (let chapterB of continentB.chapters) {
                             // We don't treat same chapter
@@ -57,9 +60,6 @@ export function prepareData() {
                                 continue;
                             }
 
-                            if (!chapterA.targetChapters) {
-                                chapterA.targetChapters = [];
-                            }
 
                             // If the chapter is on an already target city (distance already register)
                             if (
@@ -157,7 +157,12 @@ function allowedContinent(continentA, continentB) {
  * @param {*} longitudeB
  */
 function isOnTheRight(continentA, continentB, longitudeA, longitudeB) {
-    switch (continentA.id) {
+    const transformLongitudeA = ((longitudeA < 0 ? 360 + longitudeA : longitudeA) + 1.57 ) %360;
+    const transformLongitudeB = ((longitudeB < 0 ? 360 + longitudeB : longitudeB) + 1.57) % 360.01;
+    return transformLongitudeB> transformLongitudeA;
+
+
+    /*switch (continentA.id) {
         case ID_CONTINENT_EUROPE:
         case ID_CONTINENT_AFRICA:
         case ID_CONTINENT_NORTH_AMERICA:
@@ -177,7 +182,7 @@ function isOnTheRight(continentA, continentB, longitudeA, longitudeB) {
             }
             break;
     }
-    return true;
+    return true;*/
 }
 
 /*
@@ -204,7 +209,15 @@ function find_angle(A, B, C) {
 }
 
 function distance(continentAId, continentBId, A, B) {
-    const arrayEuropeAfrica = [ID_CONTINENT_EUROPE, ID_CONTINENT_AFRICA];
+
+    const transformLongitudeA = ((A.longitude < 0 ? 360 + A.longitude : A.longitude) + 1.57) % 360;
+    const transformLongitudeB = ((B.longitude < 0 ? 360 + B.longitude : B.longitude) + 1.57) %360.01;
+    const a = A.latitude + 90 - (B.latitude + 90);
+    const b =transformLongitudeA - transformLongitudeB;
+
+    return Math.sqrt(a * a + b * b);
+
+    /*const arrayEuropeAfrica = [ID_CONTINENT_EUROPE, ID_CONTINENT_AFRICA];
     const arrayAmerica = [
         ID_CONTINENT_NORTH_AMERICA,
         ID_CONTINENT_SOUTH_AMERICA,
@@ -241,5 +254,5 @@ function distance(continentAId, continentBId, A, B) {
               additionLongitudeA -
               (B.longitude + additionLongitudeB);
 
-    return Math.sqrt(a * a + b * b);
+    return Math.sqrt(a * a + b * b);*/
 }
