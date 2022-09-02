@@ -54,6 +54,20 @@ export class WorldMapMobile extends LitElement {
 
         super.connectedCallback();
 
+        this.initLeafletMap();
+        const idGDGNantes = 669;
+        let gdgNantes = undefined;
+        for (let gdgTmp of this.continents[2].chapters) {
+            if (gdgTmp.id === idGDGNantes) {
+                gdgNantes = gdgTmp;
+            }
+        }
+
+        gdgNantes.targetLongitude = gdgNantes.longitude;
+        this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
+    }
+
+    initLeafletMap() {
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
         if (this.mapElt) {
             this.map = L.map(this.mapElt).setView([47.23, -1.57], +this.zoom);
@@ -73,100 +87,6 @@ export class WorldMapMobile extends LitElement {
             // Add a svg layer to the map
             L.svg().addTo(this.map);
         }
-        const idGDGNantes = 669;
-        let gdgNantes = undefined;
-        for (let gdgTmp of this.continents[2].chapters) {
-            if (gdgTmp.id === idGDGNantes) {
-                gdgNantes = gdgTmp;
-            }
-        }
-
-        gdgNantes.targetLongitude = gdgNantes.longitude;
-        this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
-    }
-
-    showMarkers(data) {
-        const markers = [];
-        for (let region of data) {
-            for (let {
-                latitude,
-                longitude,
-                targetLongitude,
-            } of region.chapters) {
-                markers.push({ latitude, longitude, targetLongitude });
-            }
-        }
-        const d3Map = d3.select(this.mapElt).select('svg');
-        d3Map
-            .selectAll('myPlaces')
-            .data(markers)
-            .enter()
-            .append('svg:path')
-            .attr('class', 'marker')
-            .attr(
-                'd',
-                'M0,0l-8.8-17.7C-12.1-24.3-7.4-32,0-32h0c7.4,0,12.1,7.7,8.8,14.3L0,0z'
-            )
-            .attr('transform', (d) => {
-                let proj = this.map.latLngToLayerPoint([
-                    d.latitude,
-                    d.longitude,
-                ]);
-                let x = proj.x;
-                let y = proj.y;
-                return 'translate(' + x + ',' + y + ') scale(0)';
-            })
-            .transition()
-            .delay(400)
-            .duration(800)
-            //.ease('elastic')
-            .attr('transform', (d) => {
-                let proj = this.map.latLngToLayerPoint([
-                    d.latitude,
-                    d.longitude,
-                ]);
-                let x = proj.x;
-                let y = proj.y;
-                return `translate(${x},${y}) scale(${
-                    this.sizePoint * this.zoom
-                })`;
-            });
-
-        this.map.on('moveend', (event) => {
-            const d3Map = d3.select(this.mapElt).select('svg');
-            d3Map.selectAll('path.marker').attr('transform', (d) => {
-                console.log('moveEnd', d);
-                let proj = this.map.latLngToLayerPoint([
-                    d.latitude,
-                    d.longitude,
-                ]);
-                let x = proj.x;
-                let y = proj.y;
-                return `translate(${x},${y}) scale(${
-                    this.sizePoint * event.target._zoom
-                })`;
-            });
-
-            d3Map.selectAll('path.line').attr(
-                'd',
-                d3
-                    .line()
-                    .x((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.x;
-                    })
-                    .y((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.y;
-                    })
-            );
-        });
     }
 
     drawMarkers(d3Map, markers) {
@@ -176,6 +96,8 @@ export class WorldMapMobile extends LitElement {
             .data(markers)
             .enter()
             .append('svg:path')
+            .attr('id', (d) => `m${d.id}`)
+            .attr('style', 'pointer-events: auto;')
             .attr('class', 'marker')
             .attr(
                 'd',
@@ -217,7 +139,7 @@ export class WorldMapMobile extends LitElement {
             .data(dataLines)
             .enter()
             .append('path')
-            .attr('id', (d) => d[1].id)
+            .attr('id', (d) => `l${d[1].id}`)
             .attr('style', 'pointer-events: auto;')
             .attr('class', 'line')
             .attr('stroke-width', 3)
@@ -241,41 +163,66 @@ export class WorldMapMobile extends LitElement {
                         return proj.y;
                     })
             );
+    }
+
+    centerToPoint(gdg) {
+        // Update position on firebase
+        this.service.updatePosition(gdg).then(() => console.log('good'));
+
+        console.log(gdg);
+        // Center the map to point
+        this.map.setView([gdg.latitude, gdg.targetLongitude]);
+
+        // Prepare data to displays
+        const dataLines = [];
+        const markers = [];
+        markers.push({
+            id: gdg.id,
+            latitude: gdg.latitude,
+            longitude: gdg.longitude,
+            targetLongitude: gdg.targetLongitude,
+            distance: 0,
+        });
+        for (let targetChapter of gdg.targetChapters) {
+            const line = [];
+            const distance = calculateDistanceBetweenToPoints(
+                gdg,
+                targetChapter.targetChapter
+            );
+            dataLines.push(line);
+            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
+            line.push(gdg);
+            line.push({
+                ...targetChapter.targetChapter,
+                distance,
+            });
+            markers.push({
+                id: targetChapter.targetChapter.id,
+                latitude: targetChapter.targetChapter.latitude,
+                longitude: targetChapter.targetChapter.longitude,
+                targetLongitude: targetChapter.targetChapter.targetLongitude,
+                distance,
+            });
+        }
+
+        console.log('markers', markers);
+        // Display Datas
+        const d3Map = d3.select(this.mapElt).select('svg');
+
+        this.drawLines(d3Map, dataLines);
+        this.drawMarkers(d3Map, markers);
+
+        this.addListeners(d3Map);
+    }
+
+    addListeners(d3Map) {
+        // Add callback when moving on the map
+        this.map.on('moveend', this.moveMapCallback.bind(this));
+
+        // Add Line listners
         d3Map
             .selectAll('.line')
-            .on('click', (d) => {
-                const gdgToTarget =
-                    this.dictionnaryGDGChapters[d.currentTarget.id];
-                if (
-                    this.destination &&
-                    this.destination.id === gdgToTarget.id
-                ) {
-                    if (
-                        this.firstPassedToPositiveLongitude &&
-                        !this.exceedMiddleEarth &&
-                        gdgToTarget.longitude < 0
-                    ) {
-                        this.exceedMiddleEarth = true;
-                    }
-                    console.log(
-                        this.firstPassedToPositiveLongitude,
-                        gdgToTarget
-                    );
-                    this.firstPassedToPositiveLongitude =
-                        this.firstPassedToPositiveLongitude ||
-                        gdgToTarget.longitude > 0;
-                    console.log(this.firstPassedToPositiveLongitude);
-                    this.centerToPoint(gdgToTarget);
-                    this.destination = null;
-                    this.requestUpdate();
-                } else {
-                    this.destination = {
-                        ...gdgToTarget,
-                        distance: d.currentTarget.__data__[1].distance,
-                    };
-                    this.requestUpdate();
-                }
-            })
+            .on('click', this.clickLineCallback.bind(this))
             .on('mouseover', function (d) {
                 d3.select(this)
                     .attr('stroke-width', 7)
@@ -286,80 +233,95 @@ export class WorldMapMobile extends LitElement {
                     .attr('stroke-width', 3)
                     .attr('stroke', 'var(--primary)');
             });
+
+        // Add Markers listeners
+        d3Map
+            .selectAll('path.marker')
+            .on('click', this.clickMarkerCallback.bind(this))
+            .on('mouseover', function (d) {
+                d3.select(this).attr('fill', 'var(--primary)');
+            })
+            .on('mouseout', function (d) {
+                d3.select(this).attr('fill', 'var(--primary-dark)');
+            });
     }
 
-    centerToPoint(gdg) {
-        this.service.updatePosition(gdg).then(() => console.log('good'));
-        console.log(gdg);
-        this.map.setView([gdg.latitude, gdg.targetLongitude]);
-
-        const dataLines = [];
-        const markers = [];
-        markers.push({
-            latitude: gdg.latitude,
-            longitude: gdg.longitude,
-            targetLongitude: gdg.targetLongitude,
-        });
-        for (let targetChapter of gdg.targetChapters) {
-            const line = [];
-            dataLines.push(line);
-            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
-            line.push(gdg);
-            line.push({
-                ...targetChapter.targetChapter,
-                distance: calculateDistanceBetweenToPoints(
-                    gdg,
-                    targetChapter.targetChapter
-                ),
-            });
-            markers.push({
-                latitude: targetChapter.targetChapter.latitude,
-                longitude: targetChapter.targetChapter.longitude,
-                targetLongitude: targetChapter.targetChapter.targetLongitude,
-            });
-        }
-
-        console.log('markers', markers);
+    /**
+     * Called when moving the map
+     * @param {*} event
+     */
+    moveMapCallback(event) {
         const d3Map = d3.select(this.mapElt).select('svg');
-
-        this.drawLines(d3Map, dataLines);
-        this.drawMarkers(d3Map, markers);
-
-        this.map.on('moveend', (event) => {
-            const d3Map = d3.select(this.mapElt).select('svg');
-            d3Map.selectAll('path.marker').attr('transform', (d) => {
-                let proj = this.map.latLngToLayerPoint([
-                    d.latitude,
-                    d.targetLongitude,
-                ]);
-                let x = proj.x;
-                let y = proj.y;
-                this.zoom = event.target._zoom;
-                return `translate(${x},${y}) scale(${
-                    this.sizePoint * event.target._zoom
-                })`;
-            });
-
-            d3Map.selectAll('path.line').attr(
-                'd',
-                d3
-                    .line()
-                    .x((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.x;
-                    })
-                    .y((d) => {
-                        let proj = this.map.latLngToLayerPoint([
-                            d.latitude,
-                            d.targetLongitude,
-                        ]);
-                        return proj.y;
-                    })
-            );
+        d3Map.selectAll('path.marker').attr('transform', (d) => {
+            let proj = this.map.latLngToLayerPoint([
+                d.latitude,
+                d.targetLongitude,
+            ]);
+            let x = proj.x;
+            let y = proj.y;
+            this.zoom = event.target._zoom;
+            return `translate(${x},${y}) scale(${
+                this.sizePoint * event.target._zoom
+            })`;
         });
+
+        d3Map.selectAll('path.line').attr(
+            'd',
+            d3
+                .line()
+                .x((d) => {
+                    let proj = this.map.latLngToLayerPoint([
+                        d.latitude,
+                        d.targetLongitude,
+                    ]);
+                    return proj.x;
+                })
+                .y((d) => {
+                    let proj = this.map.latLngToLayerPoint([
+                        d.latitude,
+                        d.targetLongitude,
+                    ]);
+                    return proj.y;
+                })
+        );
+    }
+
+    clickLineCallback(event) {
+        const gdgToTarget =
+            this.dictionnaryGDGChapters[event.currentTarget.id.substring(1)];
+        this.clickOnTargetGDG(gdgToTarget, event.currentTarget.__data__[1]);
+    }
+
+    clickMarkerCallback(event) {
+        const gdgToTarget =
+            this.dictionnaryGDGChapters[event.currentTarget.id.substring(1)];
+        this.clickOnTargetGDG(gdgToTarget, event.currentTarget.__data__);
+    }
+
+    clickOnTargetGDG(gdgToTarget, data) {
+        if (this.destination && this.destination.id === gdgToTarget.id) {
+            if (
+                this.firstPassedToPositiveLongitude &&
+                !this.exceedMiddleEarth &&
+                gdgToTarget.longitude < 0
+            ) {
+                this.exceedMiddleEarth = true;
+            }
+            console.log(this.firstPassedToPositiveLongitude, gdgToTarget);
+            this.firstPassedToPositiveLongitude =
+                this.firstPassedToPositiveLongitude ||
+                gdgToTarget.longitude > 0;
+            console.log(this.firstPassedToPositiveLongitude);
+            this.centerToPoint(gdgToTarget);
+            this.destination = null;
+            this.requestUpdate();
+        } else {
+            this.destination = {
+                ...gdgToTarget,
+                distance: data.distance,
+            };
+            this.requestUpdate();
+        }
     }
 
     reworkCoordinatesOfTarget(gdg, target) {
