@@ -184,6 +184,8 @@ export class WorldMapMobile extends LitElement {
     }
 
     centerToPoint(gdg) {
+        this.emitGDGEvent(gdg);
+
         // Update position on firebase
         this.service.updatePosition(gdg).then(() => console.log('good'));
 
@@ -400,6 +402,15 @@ export class WorldMapMobile extends LitElement {
             '->',
             target.targetLongitude
         );*/
+    }
+
+    emitGDGEvent(gdg) {
+        const event = new CustomEvent('gdgSelectEvent', {
+            detail: { gdg },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(event);
     }
 
     render() {

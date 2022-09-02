@@ -31,14 +31,28 @@ export class Mobile extends LitElement {
             grid-template-columns: 1fr;
             grid-template-rows: 50px 1fr 100px;
             font-family: 'RumbleBrave';
+            --header-height: 50px;
         }
         header {
             background-color: rgb(193, 77, 50);
-            height: 50px;
+            height: var(--header-height);
             position: relative;
+            display: grid;
+            grid-template-columns: 1fr 75px;
+            grid-template-rows: 1fr;
         }
+
+        header p {
+            padding: 0 0 0 20px;
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+            line-height: var(--header-height);
+            height: var(--header-height);
+        }
+
         img {
-            height: 50px;
+            height: var(--header-height);
             position: absolute;
             right: 0;
         }
@@ -59,6 +73,7 @@ export class Mobile extends LitElement {
             ${this.game === 0
                 ? html`
                       <header>
+                          <p>${this.gdg ? this.gdg.title : ''}</p>
                           <img
                               src="${this.service.getUser().photoURL}"
                               referrerpolicy="no-referrer" />
@@ -66,7 +81,9 @@ export class Mobile extends LitElement {
                       <world-map-mobile
                           zoom="10"
                           .continents=${this.continents}
-                          .service=${this.service}></world-map-mobile>
+                          .service=${this.service}
+                          @gdgSelectEvent="${(gdg) =>
+                              this.selectGDG(gdg)}"></world-map-mobile>
                       <div class="buttons-area">
                           <button @click="${() => this.selectGame(GAME_TRAIN)}">
                               Train Game
@@ -115,6 +132,12 @@ export class Mobile extends LitElement {
 
     selectGame(game) {
         this.game = game;
+        this.requestUpdate();
+    }
+
+    selectGDG(event) {
+        console.log('selectGDGEvent', event);
+        this.gdg = event.detail.gdg;
         this.requestUpdate();
     }
 }
