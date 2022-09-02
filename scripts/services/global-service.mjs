@@ -38,23 +38,28 @@ export class GlobalService {
     }
 
     checkLogin(callBackUser) {
-        const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            callBackUser(user);
-            if (user) {
-                this.user = user;
-                this.checkAdmin()
-                    .then(() => {
-                        console.log('Admin');
-                    })
-                    .catch((err) => console.log('Not Admin'));
-            } else {
-                this.login();
-                console.log('userNotLogged');
-            }
-            //https://firebase.google.com/docs/auth/web/start
-            //https://firebase.google.com/docs/firestore/quickstart
-            //https://firebase.google.com/docs/auth/web/firebaseui
+        return new Promise((resolve, reject) => {
+            const auth = getAuth();
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    this.user = user;
+                    this.checkAdmin()
+                        .then(() => {
+                            resolve({ ...user, admin: true });
+                            console.log('Admin');
+                        })
+                        .catch((err) => {
+                            console.log('Not Admin', err);
+                            resolve({ ...user, admin: false });
+                        });
+                } else {
+                    reject();
+                    console.log('userNotLogged');
+                }
+                //https://firebase.google.com/docs/auth/web/start
+                //https://firebase.google.com/docs/firestore/quickstart
+                //https://firebase.google.com/docs/auth/web/firebaseui
+            });
         });
     }
 

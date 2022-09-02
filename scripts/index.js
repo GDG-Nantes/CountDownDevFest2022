@@ -11,21 +11,24 @@ class Main extends LitElement {
         this.continents = undefined;
         this.service = new GlobalService();
         this.logged = undefined;
+        this.admin = false;
         prepareData().then((continents) => {
             this.continents = continents;
             this.requestUpdate();
         });
 
-        this.service.checkLogin((user) => {
-            if (user) {
+        this.service
+            .checkLogin()
+            .then((user) => {
                 this.logged = user;
+                this.admin = user.admin;
                 console.log('userLogged', this.logged);
                 this.requestUpdate();
-            } else {
+            })
+            .catch(() => {
                 this.service.login();
                 console.log('userNotLogged');
-            }
-        });
+            });
     }
 
     static styles = css`
@@ -55,7 +58,7 @@ class Main extends LitElement {
     }
 
     renderGame() {
-        return html` ${this.isMobile()
+        return html` ${this.isMobile() || !this.admin
             ? html`<count-down-mobile
                   .continents=${this.continents}
                   .service=${this.service}></count-down-mobile>`
