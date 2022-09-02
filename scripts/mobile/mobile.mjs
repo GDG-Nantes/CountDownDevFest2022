@@ -5,6 +5,7 @@ import { BaloonGame } from './games/baloon.mjs';
 import { SubmarineGame } from './games/submarine.mjs';
 import { BoatGame } from './games/boat.mjs';
 import { WorldMapMobile } from './map-mobile.mjs';
+import { balloonCss, ticketCss } from '../styles/shared-style.mjs';
 
 const GAME_TRAIN = 1;
 const GAME_HORSE = 2;
@@ -19,306 +20,78 @@ export class Mobile extends LitElement {
         this.destination = undefined;
     }
 
-    static styles = css`
-        :host {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            top: 0;
-            left: 0;
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 50px 20px 20px 1fr;
-            font-family: 'RumbleBrave';
-            --header-height: 50px;
-            --color-bg: #f1f1f0;
-            --color-balloon: #66bb6a;
-            --color-balloon-2: #5da960;
-            --color-strings: #d9d9d9;
-            --color-basket: #ceb89f;
-            --size-balloon: 1rem;
-            --progress-balloon: 0px;
-        }
-        header {
-            background-color: rgb(193, 77, 50);
-            height: var(--header-height);
-            position: relative;
-            display: grid;
-            grid-template-columns: 1fr 75px;
-            grid-template-rows: 1fr;
-        }
+    static styles = [
+        balloonCss,
+        ticketCss,
+        css`
+            :host {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                top: 0;
+                left: 0;
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-template-rows: 50px 20px 20px 1fr;
+                font-family: 'RumbleBrave';
+                --header-height: 50px;
+                --progress-balloon: 0px;
+            }
+            header {
+                background-color: rgb(193, 77, 50);
+                height: var(--header-height);
+                position: relative;
+                display: grid;
+                grid-template-columns: 1fr 75px;
+                grid-template-rows: 1fr;
+            }
 
-        header p {
-            padding: 0 0 0 20px;
-            margin: 0;
-            color: white;
-            font-size: 1.5rem;
-            line-height: var(--header-height);
-            height: var(--header-height);
-        }
+            header p {
+                padding: 0 0 0 20px;
+                margin: 0;
+                color: white;
+                font-size: 1.5rem;
+                line-height: var(--header-height);
+                height: var(--header-height);
+            }
 
-        img {
-            height: var(--header-height);
-            position: absolute;
-            right: 0;
-        }
-        .buttons-area {
-            position: relative;
-        }
-        .gdg-target {
-            font-size: 1.5rem;
-        }
+            img {
+                height: var(--header-height);
+                position: absolute;
+                right: 0;
+            }
+            .buttons-area {
+                position: relative;
+            }
+            .gdg-target {
+                font-size: 1.5rem;
+            }
 
-        .instructions {
-            text-align: center;
-            line-height: 20px;
-        }
+            .instructions {
+                text-align: center;
+                line-height: 20px;
+            }
 
-        .progress {
-            position: relative;
-            background: linear-gradient(
-                90deg,
-                var(--primary) 0px,
-                var(--primary) var(--progress-balloon),
-                transparent var(--progress-balloon),
-                transparent 100%
-            );
-        }
+            .progress {
+                position: relative;
+                background: linear-gradient(
+                    90deg,
+                    var(--primary) 0px,
+                    var(--primary) var(--progress-balloon),
+                    transparent var(--progress-balloon),
+                    transparent 100%
+                );
+            }
 
-        .balloon {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: var(--progress-balloon);
-            transform: translate(-50%, -50%);
-            perspective-origin: 50% 100%;
-            perspective: calc(var(--size-balloon) * 0.5);
-        }
-        .balloon > .envelope {
-            position: relative;
-            display: block;
-            width: var(--size-balloon);
-            height: var(--size-balloon);
-            background-color: var(--color-balloon);
-            border-radius: var(--size-balloon);
-            perspective-origin: 50% 100%;
-            perspective: calc(var(--size-balloon) * 0.5);
-        }
-        .balloon > .envelope::before,
-        .balloon > .envelope::after {
-            position: absolute;
-            display: block;
-            content: '';
-        }
-        .balloon > .envelope::after {
-            top: 2%;
-            left: 50%;
-            width: 38%;
-            height: 80%;
-            background-color: var(--color-balloon-2);
-            transform: translateX(-50%);
-            border-radius: 50%;
-        }
-        .balloon > .envelope::before {
-            top: 15%;
-            width: calc(var(--size-balloon));
-            height: calc(var(--size-balloon) * 2.2);
-            border-radius: calc(var(--size-balloon) / 11);
-            background: linear-gradient(
-                to right,
-                var(--color-balloon) 0%,
-                var(--color-balloon) 35%,
-                var(--color-balloon-2) 35%,
-                var(--color-balloon-2) 65%,
-                var(--color-balloon) 65%,
-                var(--color-balloon) 100%
-            );
-            transform: translateZ(calc(var(--size-balloon) * -0.94))
-                rotateX(-58deg);
-        }
-        .balloon > .basket {
-            position: absolute;
-            top: 114%;
-            left: 50%;
-            display: block;
-            width: calc(var(--size-balloon) / 5);
-            height: calc(var(--size-balloon) / 10);
-            background: linear-gradient(
-                to right,
-                var(--color-strings) 0%,
-                var(--color-strings) 10%,
-                var(--color-bg) 10%,
-                var(--color-bg) 30%,
-                var(--color-strings) 30%,
-                var(--color-strings) 40%,
-                var(--color-bg) 40%,
-                var(--color-bg) 60%,
-                var(--color-strings) 60%,
-                var(--color-strings) 70%,
-                var(--color-bg) 70%,
-                var(--color-bg) 90%,
-                var(--color-strings) 90%,
-                var(--color-strings) 100%
-            );
-            border-radius: calc(var(--size-balloon) / 40);
-            border-bottom: calc(var(--size-balloon) / 5.5) solid
-                var(--color-basket);
-            transform: translateX(-50%) rotateX(-20deg);
-        }
-
-        #destination {
-            position: absolute;
-            background-color: transparent;
-            bottom: 50px;
-            left: 50px;
-            z-index: 999;
-        }
-
-        #destination .ticket {
-            align-items: center;
-            background-color: var(--tertiary);
-            border-color: var(--primary);
-            border-spacing: 2px;
-            border-style: dashed none;
-            border-width: 2px;
-            -webkit-clip-path: polygon(
-                20px 0,
-                0 20px,
-                0 calc(100% - 20px),
-                20px 100%,
-                calc(100% - 20px) 100%,
-                100% calc(100% - 20px),
-                100% 20px,
-                calc(100% - 20px) 0
-            );
-            clip-path: polygon(
-                20px 0,
-                0 20px,
-                0 calc(100% - 20px),
-                20px 100%,
-                calc(100% - 20px) 100%,
-                100% calc(100% - 20px),
-                100% 20px,
-                calc(100% - 20px) 0
-            );
-            color: var(--primary-dark);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            height: 300px;
-            justify-content: center;
-            margin: auto;
-            max-width: calc(100vw - 100px);
-            position: relative;
-            width: calc(100vw - 100px);
-        }
-
-        #destination .ticket .ticket-wrapper:after,
-        #destination .ticket .ticket-wrapper:before,
-        #destination .ticket:after,
-        #destination .ticket:before {
-            align-items: center;
-            background-color: var(--primary-dark);
-            border-radius: 0 0 18px 0;
-            content: '';
-            display: flex;
-            height: 60px;
-            justify-content: center;
-            left: 0;
-            margin: auto;
-            position: absolute;
-            right: 0;
-            width: 60px;
-            z-index: 2;
-        }
-
-        #destination .ticket .ticket-wrapper:after,
-        #destination .ticket .ticket-wrapper:before {
-            background-color: var(--primary);
-            height: 66px;
-            width: 72px;
-            z-index: 1;
-        }
-
-        #destination .ticket .ticket-wrapper:before,
-        #destination .ticket:before {
-            top: 0;
-        }
-
-        #destination .ticket .ticket-wrapper:after,
-        #destination .ticket:after {
-            bottom: 0;
-            -webkit-transform: rotate(180deg);
-            transform: rotate(180deg);
-        }
-
-        #destination .ticket:before {
-            background-color: var(--primary-dark);
-            background-image: url(/assets/images/chevron-stylise.png);
-            background-position: 50%;
-            background-repeat: no-repeat;
-            background-size: 75%;
-        }
-
-        #destination .ticket:after {
-            opacity: 0.3;
-        }
-
-        #destination .ticket.disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        #destination .ticket .ticket-wrapper {
-            height: 100%;
-            padding: 75px 10px;
-        }
-
-        #destination .ticket .ticket-wrapper .ticket-body {
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            justify-content: space-between;
-            text-align: center;
-        }
-
-        #destination .ticket .ticket-wrapper .ticket-body .price {
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: start;
-            text-align: center;
-        }
-
-        #destination .ticket .ticket-wrapper .ticket-body .price hr {
-            border-bottom-width: 2px;
-            border-color: var(--secondary);
-            border-radius: 2px;
-            width: 66px;
-        }
-
-        #destination .ticket .ticket-wrapper .ticket-body .price h2 {
-            color: var(--primary-dark);
-            margin: 10px 0 5px;
-        }
-
-        #destination .ticket .ticket-wrapper .ticket-body .description p {
-            margin: 5px 0;
-        }
-
-        #destination
-            .ticket
-            .ticket-wrapper
-            .ticket-body
-            .description
-            .quantity {
-            font-size: 80%;
-            opacity: 0.75;
-        }
-    `;
+            .card-ticket {
+                --bottom-card: 50px;
+                --left-card: 50px;
+                --witdh-card: calc(100vw - 100px);
+            }
+        `,
+    ];
 
     static properties = {
         continents: { type: Array },
@@ -361,7 +134,7 @@ export class Mobile extends LitElement {
         if (!this.destination) {
             return html``;
         }
-        return html`<div id="destination">
+        return html`<div class="card-ticket">
             <div class="ticket">
                 <div class="ticket-wrapper">
                     <div class="ticket-body">

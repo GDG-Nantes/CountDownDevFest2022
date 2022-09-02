@@ -55,7 +55,10 @@ export class WorldMap extends LitElement {
 
         this.mapElt = this.renderRoot?.querySelector('#map') ?? null;
         if (this.mapElt) {
-            this.map = L.map(this.mapElt).setView([47.23, -1.57], +this.zoom);
+            this.map = L.map(this.mapElt).setView(
+                [47.23 + 50, -1.57],
+                +this.zoom
+            );
             L.tileLayer(
                 'https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}',
                 {
