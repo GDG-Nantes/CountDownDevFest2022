@@ -60,7 +60,6 @@ export function prepareData() {
                                 continue;
                             }
 
-
                             // If the chapter is on an already target city (distance already register)
                             if (
                                 chapterA.targetChapters.find(
@@ -157,32 +156,11 @@ function allowedContinent(continentA, continentB) {
  * @param {*} longitudeB
  */
 function isOnTheRight(continentA, continentB, longitudeA, longitudeB) {
-    const transformLongitudeA = ((longitudeA < 0 ? 360 + longitudeA : longitudeA) + 1.57 ) %360;
-    const transformLongitudeB = ((longitudeB < 0 ? 360 + longitudeB : longitudeB) + 1.57) % 360.01;
-    return transformLongitudeB> transformLongitudeA;
-
-
-    /*switch (continentA.id) {
-        case ID_CONTINENT_EUROPE:
-        case ID_CONTINENT_AFRICA:
-        case ID_CONTINENT_NORTH_AMERICA:
-        case ID_CONTINENT_SOUTH_AMERICA:
-            if (longitudeB < longitudeA) {
-                return false;
-            }
-            break;
-        case ID_CONTINENT_ASIA:
-            // Particular case for asia, we switch in latitude to 180 to latitude in america in -180->-60
-            if (
-                (longitudeB < longitudeA && longitudeA > 0 && longitudeB > 0) ||
-                (longitudeB < longitudeA && longitudeA < 0) ||
-                (longitudeA < 0 && longitudeB > 0)
-            ) {
-                return false;
-            }
-            break;
-    }
-    return true;*/
+    const transformLongitudeA =
+        ((longitudeA < 0 ? 360 + longitudeA : longitudeA) + 1.57) % 360;
+    const transformLongitudeB =
+        ((longitudeB < 0 ? 360 + longitudeB : longitudeB) + 1.57) % 360.01;
+    return transformLongitudeB > transformLongitudeA;
 }
 
 /*
@@ -209,50 +187,12 @@ function find_angle(A, B, C) {
 }
 
 function distance(continentAId, continentBId, A, B) {
-
-    const transformLongitudeA = ((A.longitude < 0 ? 360 + A.longitude : A.longitude) + 1.57) % 360;
-    const transformLongitudeB = ((B.longitude < 0 ? 360 + B.longitude : B.longitude) + 1.57) %360.01;
+    const transformLongitudeA =
+        ((A.longitude < 0 ? 360 + A.longitude : A.longitude) + 1.57) % 360;
+    const transformLongitudeB =
+        ((B.longitude < 0 ? 360 + B.longitude : B.longitude) + 1.57) % 360.01;
     const a = A.latitude + 90 - (B.latitude + 90);
-    const b =transformLongitudeA - transformLongitudeB;
+    const b = transformLongitudeA - transformLongitudeB;
 
     return Math.sqrt(a * a + b * b);
-
-    /*const arrayEuropeAfrica = [ID_CONTINENT_EUROPE, ID_CONTINENT_AFRICA];
-    const arrayAmerica = [
-        ID_CONTINENT_NORTH_AMERICA,
-        ID_CONTINENT_SOUTH_AMERICA,
-    ];
-    let additionLongitudeA = 0;
-    let additionLongitudeB = 0;
-    let bLength = 999;
-    // We have to take care of speficics of maps, a part of europe as negative longtitude going to positive numbers (Nantes ~= -1 Strasbourg ~= 1)
-    // Same thing with asia going to america
-    if (
-        arrayEuropeAfrica.includes(continentAId) &&
-        arrayEuropeAfrica.includes(continentBId)
-    ) {
-        additionLongitudeA = 180;
-        additionLongitudeB = 180;
-    } else if (
-        continentAId === ID_CONTINENT_ASIA &&
-        arrayAmerica.includes(continentBId)
-    ) {
-        additionLongitudeA = 180;
-        const factorLongitudeA = -1;
-        additionLongitudeB = 180;
-        bLength =
-            A.longitude * factorLongitudeA +
-            additionLongitudeA +
-            (B.longitude + additionLongitudeB);
-    }
-
-    const a = A.latitude + 90 - (B.latitude + 90);
-    const b =
-        bLength !== 999
-            ? bLength
-            : A.longitude +
-              additionLongitudeA -
-              (B.longitude + additionLongitudeB);
-
-    return Math.sqrt(a * a + b * b);*/
 }

@@ -17,13 +17,11 @@ export class WorldMapMobile extends LitElement {
             position: relative;
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: 50px 1fr 20px;
+            grid-template-rows: 1fr;
         }
         #map {
             height: 100%;
             position: relative;
-        }
-        #destination {
         }
     `;
 
@@ -341,6 +339,7 @@ export class WorldMapMobile extends LitElement {
                 ...gdgToTarget,
                 distance: data.distance,
             };
+            this.emitGDGHoverEvent(gdgToTarget, data.distance);
             this.requestUpdate();
         }
     }
@@ -404,6 +403,15 @@ export class WorldMapMobile extends LitElement {
         );*/
     }
 
+    emitGDGHoverEvent(gdg, distance) {
+        const event = new CustomEvent('gdgHoverEvent', {
+            detail: { gdg, distance },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(event);
+    }
+
     emitGDGEvent(gdg) {
         const event = new CustomEvent('gdgSelectEvent', {
             detail: { gdg },
@@ -420,14 +428,7 @@ export class WorldMapMobile extends LitElement {
                 href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
                 integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
                 crossorigin="" />
-            <div>Select your next destination</div>
             <div id="map"></div>
-            <div id="destination">
-                Destination:
-                ${this.destination
-                    ? `${this.destination.city} (${this.destination.country}) -> ${this.destination.distance} km`
-                    : ''}
-            </div>
         `;
     }
 }
