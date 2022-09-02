@@ -41,6 +41,7 @@ export class WorldMapMobile extends LitElement {
         this.exceedMiddleEarth = false;
         this.destination = null;
         this.firstPassedToPositiveLongitude = false;
+        this.currentMarkers = undefined;
     }
 
     firstUpdated() {
@@ -65,6 +66,8 @@ export class WorldMapMobile extends LitElement {
 
         gdgNantes.targetLongitude = gdgNantes.longitude;
         this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
+
+        this.addDebugHelpers();
     }
 
     initLeafletMap() {
@@ -87,6 +90,21 @@ export class WorldMapMobile extends LitElement {
             // Add a svg layer to the map
             L.svg().addTo(this.map);
         }
+    }
+
+    addDebugHelpers() {
+        document.addEventListener('keyup', (event) => {
+            console.log('keyup', event);
+            if (
+                event.key === 'ArrowRight' &&
+                this.currentMarkers &&
+                this.currentMarkers.length > 1
+            ) {
+                const gdgToTarget =
+                    this.dictionnaryGDGChapters[this.currentMarkers[1].id];
+                this.centerToPoint(gdgToTarget);
+            }
+        });
     }
 
     drawMarkers(d3Map, markers) {
@@ -204,6 +222,7 @@ export class WorldMapMobile extends LitElement {
                 distance,
             });
         }
+        this.currentMarkers = markers;
 
         console.log('markers', markers);
         // Display Datas
