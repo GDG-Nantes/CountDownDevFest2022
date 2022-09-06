@@ -4,6 +4,10 @@ export class HorseGame extends LitElement {
     constructor() {
         super();
         this.horseRunStep = 0;
+        this.nbAnimationSteps = 6;
+        this.distanceTraveledByStep = 50;
+        this.totalDistanceTraveled = 0;
+        this.nextStepHasToBeRight = true;
     }
 
     static styles = css`
@@ -11,46 +15,49 @@ export class HorseGame extends LitElement {
             position: relative;
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: 10vh 50vh 40vh;
+            grid-template-rows: 10vh 45vh 5vh 40vh;
         }
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        #horserunFrame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         #horserun {
             width: 60px;
-            background: url('../../../assets/horse-game/horse-walk.png') no-repeat;
+            height: 60px;
+            background: url('../../../assets/horse-game/horse-run.png') no-repeat;
             display: inline-block;
+            transform: scale(3);
         }
         #horserun.horserun0 {
             background-position: 0px;
         }
         #horserun.horserun1 {
-            background-position: -60px;
+            background-position: -300px;
         }
         #horserun.horserun2 {
-            background-position: -120px;
+            background-position: -240px;
         }
         #horserun.horserun3 {
             background-position: -180px;
         }
         #horserun.horserun4 {
-            background-position: -240px;
+            background-position: -120px;
         }
         #horserun.horserun5 {
-            background-position: -300px;
+            background-position: -60px;
         }
-        #horserun.horserun6 {
-            background-position: -360px;
-        }
-        #horserun.horserun7 {
-            background-position: -420px;
+        #distanceTraveled {
+            text-align: center;
         }
         #horseshoes {
             display: flex;
             justify-content: space-evenly;
-            border: 1px solid red;
         }
         #horseshoes button {
             width: 30vw;
@@ -66,8 +73,10 @@ export class HorseGame extends LitElement {
                 <div>Horse Game</div>
                 <button @click="${this.quitEvent}">Quit</button>
             </header>
-            <div id="horserun" class="horserun0">
+            <div id="horserunFrame">
+                <div id="horserun" class="horserun0"></div>
             </div>
+            <div id="distanceTraveled">${this.totalDistanceTraveled}m</div>
             <div id="horseshoes">
                 <button @click="${() => this.leftHorseShoeClick()}">Gauche</button>
                 <button @click="${() => this.rightHorseShoeClick()}">Droite</button>
@@ -75,17 +84,30 @@ export class HorseGame extends LitElement {
         `;
     }
 
+    runOneStep() {
+        // Animate horse
+        const oldStep = this.horseRunStep % this.nbAnimationSteps;
+        const newStep = ++this.horseRunStep % this.nbAnimationSteps;
+        this.renderRoot?.querySelector('#horserun').classList.replace(`horserun${oldStep}`, `horserun${newStep}`);
+
+        // Update traveled distance
+        this.totalDistanceTraveled += this.distanceTraveledByStep;
+        this.requestUpdate();
+
+        // Switch to next step (left or right)
+        this.nextStepHasToBeRight = !this.nextStepHasToBeRight;
+    }
+
     leftHorseShoeClick() {
-        // TODO: handle left / right pace
+        if (!this.nextStepHasToBeRight) {
+            this.runOneStep();
+        }
     }
 
     rightHorseShoeClick() {
-        console.log('Right!');
-        const oldStep = this.horseRunStep % 8;
-        const newStep = ++this.horseRunStep % 8;
-        console.log('Right!', oldStep, newStep);
-        this.renderRoot?.querySelector('#horserun').classList.replace(`horserun${oldStep}`, `horserun${newStep}`);
-        console.log('New right => ', this.renderRoot?.querySelector('#horserun').classList);
+        if (this.nextStepHasToBeRight) {
+            this.runOneStep();
+        }
     }
 
     quitEvent() {
