@@ -10,6 +10,7 @@ const ID_CONTINENT_EUROPE = 2;
 const ID_CONTINENT_ASIA = 3;
 const ID_CONTINENT_SOUTH_AMERICA = 4;
 const ID_CONTINENT_NORTH_AMERICA = 5;
+const GDG_NANTES = { id: 669, latitude: 47.23, longitude: -1.57 };
 
 export class WorldMapMobile extends LitElement {
     static styles = css`
@@ -29,6 +30,9 @@ export class WorldMapMobile extends LitElement {
         zoom: { type: Number },
         //sizePoint: { type: Number, attribute: 'size-point' },
         continents: { type: Array },
+        /**
+         * @Type GlobalService
+         */
         service: { type: Object },
     };
 
@@ -40,6 +44,8 @@ export class WorldMapMobile extends LitElement {
         this.destination = null;
         this.firstPassedToPositiveLongitude = false;
         this.currentMarkers = undefined;
+        this.flagGDGNantesPassed = false;
+        this.globalDistance = 0;
     }
 
     firstUpdated() {
@@ -54,14 +60,7 @@ export class WorldMapMobile extends LitElement {
         super.connectedCallback();
 
         this.initLeafletMap();
-        const idGDGNantes = 669;
-        let gdgNantes = undefined;
-        for (let gdgTmp of this.continents[2].chapters) {
-            if (gdgTmp.id === idGDGNantes) {
-                gdgNantes = gdgTmp;
-            }
-        }
-
+        let gdgNantes = this.dictionnaryGDGChapters[GDG_NANTES.id];
         gdgNantes.targetLongitude = gdgNantes.longitude;
         this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
 
@@ -99,7 +98,13 @@ export class WorldMapMobile extends LitElement {
                 this.currentMarkers.length > 1
             ) {
                 const gdgToTarget =
-                    this.dictionnaryGDGChapters[this.currentMarkers[1].id];
+                    this.dictionnaryGDGChapters[
+                        this.currentMarkers.sort(
+                            (marker1, marker2) =>
+                                marker2.distance - marker1.distance
+                        )[0].id
+                    ];
+                this.globalDistance += this.currentMarkers[0].distance;
                 this.centerToPoint(gdgToTarget);
             }
         });
@@ -191,47 +196,66 @@ export class WorldMapMobile extends LitElement {
         // Center the map to point
         this.map.setView([gdg.latitude, gdg.targetLongitude]);
 
-        // Prepare data to displays
-        const dataLines = [];
-        const markers = [];
-        markers.push({
-            id: gdg.id,
-            latitude: gdg.latitude,
-            longitude: gdg.longitude,
-            targetLongitude: gdg.targetLongitude,
-            distance: 0,
-        });
-        for (let targetChapter of gdg.targetChapters) {
-            const line = [];
-            const distance = calculateDistanceBetweenToPoints(
-                gdg,
-                targetChapter.targetChapter
-            );
-            dataLines.push(line);
-            this.reworkCoordinatesOfTarget(gdg, targetChapter.targetChapter);
-            line.push(gdg);
-            line.push({
-                ...targetChapter.targetChapter,
-                distance,
-            });
+        // If we arrive again in Nantes, then we consider that we are arrived
+        if (
+            gdg.longitude === GDG_NANTES.longitude &&
+            this.flagGDGNantesPassed
+        ) {
+            // Finish the game
+            this.service
+                .finishGame(this.globalDistance)
+                .then(() => console.log('finish'));
+            this.emitFinishEvent();
+        } else {
+            this.flagGDGNantesPassed =
+                this.flagGDGNantesPassed ||
+                gdg.longitude === GDG_NANTES.longitude;
+            // Prepare data to displays
+            const dataLines = [];
+            const markers = [];
             markers.push({
-                id: targetChapter.targetChapter.id,
-                latitude: targetChapter.targetChapter.latitude,
-                longitude: targetChapter.targetChapter.longitude,
-                targetLongitude: targetChapter.targetChapter.targetLongitude,
-                distance,
+                id: gdg.id,
+                latitude: gdg.latitude,
+                longitude: gdg.longitude,
+                targetLongitude: gdg.targetLongitude,
+                distance: 0,
             });
+            for (let targetChapter of gdg.targetChapters) {
+                const line = [];
+                const distance = calculateDistanceBetweenToPoints(
+                    gdg,
+                    targetChapter.targetChapter
+                );
+                dataLines.push(line);
+                this.reworkCoordinatesOfTarget(
+                    gdg,
+                    targetChapter.targetChapter
+                );
+                line.push(gdg);
+                line.push({
+                    ...targetChapter.targetChapter,
+                    distance,
+                });
+                markers.push({
+                    id: targetChapter.targetChapter.id,
+                    latitude: targetChapter.targetChapter.latitude,
+                    longitude: targetChapter.targetChapter.longitude,
+                    targetLongitude:
+                        targetChapter.targetChapter.targetLongitude,
+                    distance,
+                });
+            }
+            this.currentMarkers = markers;
+
+            console.log('markers', markers);
+            // Display Datas
+            const d3Map = d3.select(this.mapElt).select('svg');
+
+            this.drawLines(d3Map, dataLines);
+            this.drawMarkers(d3Map, markers);
+
+            this.addListeners(d3Map);
         }
-        this.currentMarkers = markers;
-
-        console.log('markers', markers);
-        // Display Datas
-        const d3Map = d3.select(this.mapElt).select('svg');
-
-        this.drawLines(d3Map, dataLines);
-        this.drawMarkers(d3Map, markers);
-
-        this.addListeners(d3Map);
     }
 
     addListeners(d3Map) {
@@ -333,6 +357,7 @@ export class WorldMapMobile extends LitElement {
             console.log(this.firstPassedToPositiveLongitude);
             this.centerToPoint(gdgToTarget);
             this.destination = null;
+            this.globalDistance += data.distance;
             this.requestUpdate();
         } else {
             this.destination = {
@@ -415,6 +440,15 @@ export class WorldMapMobile extends LitElement {
     emitGDGEvent(gdg) {
         const event = new CustomEvent('gdgSelectEvent', {
             detail: { gdg },
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(event);
+    }
+
+    emitFinishEvent() {
+        const event = new CustomEvent('finishEvent', {
+            detail: { distance: this.globalDistance, days: 0 },
             bubbles: true,
             composed: true,
         });

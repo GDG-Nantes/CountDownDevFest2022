@@ -18,6 +18,7 @@ export class Mobile extends LitElement {
         super();
         this.game = 0;
         this.destination = undefined;
+        this.endGame = undefined;
     }
 
     static styles = [
@@ -121,10 +122,11 @@ export class Mobile extends LitElement {
                           zoom="10"
                           .continents=${this.continents}
                           .service=${this.service}
+                          @finishEvent="${(event) => this.finish(event)}"
                           @gdgSelectEvent="${(event) => this.selectGDG(event)}"
                           @gdgHoverEvent="${(event) =>
                               this.hoverGDG(event)}"></world-map-mobile>
-                      ${this.renderDestination()}
+                      ${this.renderDestination()} ${this.renderEndGame()}
                   `
                 : this.renderGame()}
         `;
@@ -173,6 +175,31 @@ export class Mobile extends LitElement {
         </div>`;
     }
 
+    renderEndGame() {
+        if (!this.endGame) {
+            return html``;
+        }
+        return html`<div class="card-ticket">
+            <div class="ticket">
+                <div class="ticket-wrapper">
+                    <div class="ticket-body">
+                        <div class="gdg-target">
+                            Congrats! You finish your worldtour with
+                            ${this.endGame
+                                ? `${this.endGame.distance} km and in ${this.endGame.days} days`
+                                : ''}
+                        </div>
+                        <div class="buttons-area">
+                            <button @click="${() => this.reset()}">
+                                Try again to do better
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
     renderGame() {
         switch (this.game) {
             case GAME_TRAIN:
@@ -195,6 +222,10 @@ export class Mobile extends LitElement {
         }
     }
 
+    reset() {
+        // TODO
+    }
+
     selectGame(game) {
         this.game = game;
         this.requestUpdate();
@@ -211,6 +242,13 @@ export class Mobile extends LitElement {
         this.destination = {
             ...event.detail.gdg,
             distance: event.detail.distance,
+        };
+        this.requestUpdate();
+    }
+
+    finish(event) {
+        this.endGame = {
+            ...event.detail,
         };
         this.requestUpdate();
     }

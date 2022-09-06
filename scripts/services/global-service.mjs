@@ -136,6 +136,31 @@ export class GlobalService {
         );
     }
 
+    finishGame(distance) {
+        return new Promise((resolve, reject) =>
+            toDataURL(this.user.photoURL).then((base64User) =>
+                setDoc(doc(this.db, 'travel', this.user.uid), {
+                    uid: this.user.uid,
+                    photoURL: this.user.photoURL,
+                    base64: base64User,
+                    longitude: this.currentGDG.longitude,
+                    latitude: this.currentGDG.latitude,
+                    targetLongitude: this.currentGDG.targetLongitude,
+                    finish: true,
+                    distance,
+                })
+                    .then(() => {
+                        console.log('Write new position');
+                        resolve(true);
+                    })
+                    .catch((err) => {
+                        console.log('error', err);
+                        reject(err);
+                    })
+            )
+        );
+    }
+
     watchUpdatePositions(callBack) {
         const q = query(collection(this.db, 'travel'));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
