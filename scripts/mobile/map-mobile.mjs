@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import * as L from 'leaflet';
 import { LEAFLET_TOKEN } from '../../config/secrets.mjs';
 import { csvParse } from 'd3';
-import { calculateDistanceBetweenToPoints } from '../services/helpers.mjs';
+import { calculateDistanceBetweenToPoints } from '../utilities/helpers.mjs';
 
 const ID_CONTINENT_AFRICA = 1;
 const ID_CONTINENT_EUROPE = 2;

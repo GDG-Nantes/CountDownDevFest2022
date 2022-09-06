@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { WorldMap } from './map.mjs';
 import { ticketCss } from '../styles/shared-style.mjs';
+import { CountDownHelper } from '../utilities/countdownHelper.mjs';
 
 export class CountDown extends LitElement {
     static styles = [
@@ -43,16 +44,49 @@ export class CountDown extends LitElement {
                 z-index: 999;
                 font-size: 5rem;
             }
+
+            /* LEAVE AT BOTTOM OF CSS FILE */
+            .hidden {
+                display: none;
+            }
+
+            #opacity {
+                position: absolute;
+                overflow: hidden;
+                background: black;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 5s;
+                z-index: 100;
+                display: flex;
+                flex: 1;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            #opacity.black {
+                opacity: 1;
+            }
         `,
     ];
-    constructor() {
-        super();
-    }
-
     static properties = {
         continents: { type: Array },
         service: { type: Object },
     };
+
+    constructor() {
+        super();
+    }
+
+    firstUpdated() {
+        new CountDownHelper(
+            this.renderRoot?.querySelector('.countdown'),
+            this.renderRoot?.querySelector('#opacity')
+        );
+    }
 
     render() {
         return html`
@@ -79,6 +113,7 @@ export class CountDown extends LitElement {
                 Join the trip at<br />
                 https://bit.ly/worldtournantes
             </div>
+            <div id="opacity" style="display:none"></div>
         `;
     }
 }

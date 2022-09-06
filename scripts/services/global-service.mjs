@@ -17,7 +17,7 @@ import {
     getAuth,
     onAuthStateChanged,
 } from 'firebase/auth';
-import { toDataURL } from './helpers.mjs';
+import { toDataURL } from '../utilities/helpers.mjs';
 
 export class GlobalService {
     constructor() {
