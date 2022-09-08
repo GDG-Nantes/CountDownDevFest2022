@@ -56,12 +56,20 @@ export class HorseGame extends LitElement {
             text-align: center;
         }
         #horseshoes {
+            padding-top: 5vh;
             display: flex;
             justify-content: space-evenly;
         }
         #horseshoes button {
+            border: 0;
             width: 30vw;
-            height: 30vh; 
+            height: 15vh;
+            background: url(../../../assets/horse-game/horseshoe.svg) no-repeat;
+        }
+        #horseshoes button.colored {
+            color: green;
+            font-weight: bold;
+            text-decoration:underline
         }
     `;
 
@@ -78,8 +86,8 @@ export class HorseGame extends LitElement {
             </div>
             <div id="distanceTraveled">${this.totalDistanceTraveled}m</div>
             <div id="horseshoes">
-                <button @click="${() => this.leftHorseShoeClick()}">Gauche</button>
-                <button @click="${() => this.rightHorseShoeClick()}">Droite</button>
+                <button id="horseLeftShoe" @click="${() => this.leftHorseShoeClick()}" class="${!this.nextStepHasToBeRight ? 'colored' : '' }">Gauche</button>
+                <button id="horseRightShoe" @click="${() => this.rightHorseShoeClick()}" class="${this.nextStepHasToBeRight ? 'colored' : '' }">Droite</button>
             </div>
         `;
     }
