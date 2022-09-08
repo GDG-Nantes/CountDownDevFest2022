@@ -67,7 +67,7 @@ export class HorseGame extends LitElement {
             background: url(../../../assets/horse-game/horseshoe.svg) no-repeat;
         }
         #horseshoes button.colored {
-            color: green;
+            color: #C14D32;
             font-weight: bold;
             text-decoration:underline
         }
