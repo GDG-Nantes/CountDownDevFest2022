@@ -23,6 +23,7 @@ export class GlobalService {
     constructor() {
         this.db = getFirestore(firebaseApp);
         this.currentGDG = undefined;
+        this.base64User = undefined;
     }
 
     getUser() {
@@ -43,6 +44,9 @@ export class GlobalService {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     this.user = user;
+                    toDataURL(this.user.photoURL).then(
+                        (base64User) => (this.base64User = base64User)
+                    );
                     this.checkAdmin()
                         .then(() => {
                             resolve({ ...user, admin: true });
@@ -74,6 +78,9 @@ export class GlobalService {
                 const token = credential.accessToken;
                 // The signed-in user info.
                 this.user = result.user;
+                toDataURL(this.user.photoURL).then(
+                    (base64User) => (this.base64User = base64User)
+                );
                 // ...
             })
             .catch((error) => {
@@ -112,14 +119,43 @@ export class GlobalService {
         });
     }
 
+    getCurrentUser() {
+        return new Promise((resolve, reject) => {
+            const docRef = doc(this.db, 'travel', this.user.uid);
+            getDoc(docRef).then((docTmp) => {
+                let docToWrite = {
+                    uid: this.user.uid,
+                    photoURL: this.user.photoURL,
+                    base64: this.base64User,
+                    longitude: this.currentGDG.longitude,
+                    latitude: this.currentGDG.latitude,
+                    targetLongitude: this.currentGDG.targetLongitude,
+                    finish: false,
+                    name: this.user.displayName,
+                    distance: 99999999,
+                };
+
+                if (docTmp.exists()) {
+                    docToWrite.distance = Math.min(
+                        docTmp.data().distance
+                            ? docTmp.data().distance
+                            : 99999999,
+                        99999999
+                    );
+                    docToWrite.finish = !!docTmp.data().finish;
+                }
+
+                resolve(docToWrite);
+            });
+        });
+    }
+
     updatePosition(gdg) {
         this.currentGDG = gdg;
         return new Promise((resolve, reject) =>
-            toDataURL(this.user.photoURL).then((base64User) =>
+            this.getCurrentUser().then((docUser) =>
                 setDoc(doc(this.db, 'travel', this.user.uid), {
-                    uid: this.user.uid,
-                    photoURL: this.user.photoURL,
-                    base64: base64User,
+                    ...docUser,
                     longitude: gdg.longitude,
                     latitude: gdg.latitude,
                     targetLongitude: gdg.targetLongitude,
@@ -138,14 +174,9 @@ export class GlobalService {
 
     finishGame(distance) {
         return new Promise((resolve, reject) =>
-            toDataURL(this.user.photoURL).then((base64User) =>
+            this.getCurrentUser().then((docUser) =>
                 setDoc(doc(this.db, 'travel', this.user.uid), {
-                    uid: this.user.uid,
-                    photoURL: this.user.photoURL,
-                    base64: base64User,
-                    longitude: this.currentGDG.longitude,
-                    latitude: this.currentGDG.latitude,
-                    targetLongitude: this.currentGDG.targetLongitude,
+                    ...docUser,
                     finish: true,
                     distance,
                 })

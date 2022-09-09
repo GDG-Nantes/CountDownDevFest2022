@@ -151,8 +151,28 @@ export class WorldMap extends LitElement {
             photoUser: documentUpdate.base64,
             latitude: documentUpdate.latitude,
             longitude: documentUpdate.longitude,
+            finish: documentUpdate.finish,
+            distance: documentUpdate.distance,
+            name: documentUpdate.name,
         });
-        this.showUsers([...this.userMap.values()]);
+        const users = [...this.userMap.values()];
+        this.showUsers(users);
+        this.emitTopUsersEvent(users);
+    }
+
+    emitTopUsersEvent(users) {
+        const filterUsers = users
+            .filter((user) => user.finish)
+            .sort((user1, user2) => user2.distance - user1.distance)
+            .slice(0, 9);
+        if (filterUsers.length > 0) {
+            const event = new CustomEvent('topUsersEvent', {
+                detail: { users: filterUsers },
+                bubbles: true,
+                composed: true,
+            });
+            this.dispatchEvent(event);
+        }
     }
 
     showMarkers(data) {

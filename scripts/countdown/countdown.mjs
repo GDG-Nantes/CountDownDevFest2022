@@ -45,6 +45,14 @@ export class CountDown extends LitElement {
                 font-size: 5rem;
             }
 
+            .card-ticket .ticket .ticket-wrapper .ticket-body {
+                justify-content: initial;
+            }
+
+            .top-users {
+                text-align: right;
+            }
+
             /* LEAVE AT BOTTOM OF CSS FILE */
             .hidden {
                 display: none;
@@ -79,6 +87,7 @@ export class CountDown extends LitElement {
 
     constructor() {
         super();
+        this.topUsers = [];
     }
 
     firstUpdated() {
@@ -96,11 +105,20 @@ export class CountDown extends LitElement {
                     <div class="ticket-wrapper">
                         <div class="ticket-body">
                             Scoring :
-                            <ul>
-                                <li>JF</li>
-                                <li>Gawel</li>
-                                <li>Gildas</li>
-                            </ul>
+                            <br />
+                            <br />
+                            <div class="top-users">
+                                ${this.topUsers.length === 0
+                                    ? ''
+                                    : this.topUsers.map(
+                                          (user) => html`
+                                              <span
+                                                  >${user.name} :
+                                                  ${user.distance}km</span
+                                              >
+                                          `
+                                      )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,13 +126,20 @@ export class CountDown extends LitElement {
             <world-map
                 zoom="3"
                 .continents=${this.continents}
-                .service=${this.service}></world-map>
+                .service=${this.service}
+                @topUsersEvent="${(event) =>
+                    this.topUsersEvent(event)}"></world-map>
             <div class="join">
                 Join the trip at<br />
                 https://bit.ly/worldtournantes
             </div>
             <div id="opacity" style="display:none"></div>
         `;
+    }
+
+    topUsersEvent(event) {
+        this.topUsers = event.detail.users;
+        this.requestUpdate();
     }
 }
 customElements.define('count-down', CountDown);
