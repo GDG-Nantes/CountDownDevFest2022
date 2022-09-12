@@ -46,6 +46,20 @@ export class WorldMapMobile extends LitElement {
         this.currentMarkers = undefined;
         this.flagGDGNantesPassed = false;
         this.globalDistance = 0;
+        this._reset = false;
+    }
+
+    set reset(reset) {
+        this._reset = reset;
+        if (this._reset) {
+            this.initValuesForGame();
+
+            this.requestUpdate();
+        }
+    }
+
+    get reset() {
+        return this._reset;
     }
 
     firstUpdated() {
@@ -60,11 +74,21 @@ export class WorldMapMobile extends LitElement {
         super.connectedCallback();
 
         this.initLeafletMap();
+        this.initValuesForGame();
+
+        this.addDebugHelpers();
+    }
+
+    initValuesForGame() {
+        this.exceedMiddleEarth = false;
+        this.destination = null;
+        this.firstPassedToPositiveLongitude = false;
+        this.currentMarkers = undefined;
+        this.flagGDGNantesPassed = false;
+        this.globalDistance = 0;
         let gdgNantes = this.dictionnaryGDGChapters[GDG_NANTES.id];
         gdgNantes.targetLongitude = gdgNantes.longitude;
         this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
-
-        this.addDebugHelpers();
     }
 
     initLeafletMap() {

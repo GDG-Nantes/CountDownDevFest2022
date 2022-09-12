@@ -19,6 +19,7 @@ export class Mobile extends LitElement {
         this.game = 0;
         this.destination = undefined;
         this.endGame = undefined;
+        this.resetGame = false;
     }
 
     static styles = [
@@ -122,6 +123,7 @@ export class Mobile extends LitElement {
                           zoom="10"
                           .continents=${this.continents}
                           .service=${this.service}
+                          .reset=${this.resetGame}
                           @finishEvent="${(event) => this.finish(event)}"
                           @gdgSelectEvent="${(event) => this.selectGDG(event)}"
                           @gdgHoverEvent="${(event) =>
@@ -223,7 +225,13 @@ export class Mobile extends LitElement {
     }
 
     reset() {
-        // TODO
+        this.resetGame = true;
+        setTimeout(() => {
+            this.resetGame = false;
+            this.endGame = undefined;
+            this.requestUpdate();
+        }, 100);
+        this.requestUpdate();
     }
 
     selectGame(game) {
