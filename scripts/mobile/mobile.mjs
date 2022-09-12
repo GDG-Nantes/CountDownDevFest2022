@@ -20,6 +20,7 @@ export class Mobile extends LitElement {
         this.destination = undefined;
         this.endGame = undefined;
         this.resetGame = false;
+        this.timeGame = 0;
     }
 
     static styles = [
@@ -206,22 +207,41 @@ export class Mobile extends LitElement {
         switch (this.game) {
             case GAME_TRAIN:
                 return html`<train-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></train-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></train-game>`;
             case GAME_HORSE:
                 return html`<horse-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></horse-game>`;
+                    .distanceToRun=${this.destination.distance * 1000}
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></horse-game>`;
             case GAME_BALOON:
                 return html`<baloon-game
-                    @exitGameEvent="${() =>
-                        this.selectGame(0)}"></baloon-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></baloon-game>`;
             case GAME_SUBMARINE:
                 return html`<submarine-game
-                    @exitGameEvent="${() =>
-                        this.selectGame(0)}"></submarine-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></submarine-game>`;
             case GAME_BOAT:
                 return html`<boat-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></boat-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></boat-game>`;
         }
+    }
+
+    finishGame(event) {
+        console.log('finishGame', event, event.detail);
+        this.selectGame(0);
+        setTimeout(() => {
+            const mapElt =
+                this.renderRoot?.querySelector('world-map-mobile') ?? null;
+            mapElt.clickOnTargetGDG(this.destination, this.destination);
+        }, 100);
     }
 
     reset() {

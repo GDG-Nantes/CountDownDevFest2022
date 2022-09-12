@@ -5,9 +5,10 @@ export class HorseGame extends LitElement {
         super();
         this.horseRunStep = 0;
         this.nbAnimationSteps = 6;
-        this.distanceTraveledByStep = 50;
+        this.distanceTraveledByStep = 500;
         this.totalDistanceTraveled = 0;
         this.nextStepHasToBeRight = true;
+        this.timer = undefined;
     }
 
     static styles = css`
@@ -30,7 +31,8 @@ export class HorseGame extends LitElement {
         #horserun {
             width: 60px;
             height: 60px;
-            background: url('../../../assets/horse-game/horse-run.png') no-repeat;
+            background: url('../../../assets/horse-game/horse-run.png')
+                no-repeat;
             display: inline-block;
             transform: scale(3);
         }
@@ -67,13 +69,15 @@ export class HorseGame extends LitElement {
             background: url(../../../assets/horse-game/horseshoe.svg) no-repeat;
         }
         #horseshoes button.colored {
-            color: #C14D32;
+            color: #c14d32;
             font-weight: bold;
-            text-decoration:underline
+            text-decoration: underline;
         }
     `;
 
-    static properties = {};
+    static properties = {
+        distanceToRun: { type: Number },
+    };
 
     render() {
         return html`
@@ -86,17 +90,32 @@ export class HorseGame extends LitElement {
             </div>
             <div id="distanceTraveled">${this.totalDistanceTraveled}m</div>
             <div id="horseshoes">
-                <button id="horseLeftShoe" @click="${() => this.leftHorseShoeClick()}" class="${!this.nextStepHasToBeRight ? 'colored' : '' }">Gauche</button>
-                <button id="horseRightShoe" @click="${() => this.rightHorseShoeClick()}" class="${this.nextStepHasToBeRight ? 'colored' : '' }">Droite</button>
+                <button
+                    id="horseLeftShoe"
+                    @click="${() => this.leftHorseShoeClick()}"
+                    class="${!this.nextStepHasToBeRight ? 'colored' : ''}">
+                    Gauche
+                </button>
+                <button
+                    id="horseRightShoe"
+                    @click="${() => this.rightHorseShoeClick()}"
+                    class="${this.nextStepHasToBeRight ? 'colored' : ''}">
+                    Droite
+                </button>
             </div>
         `;
     }
 
     runOneStep() {
+        if (!this.timer) {
+            this.timer = Date.now();
+        }
         // Animate horse
         const oldStep = this.horseRunStep % this.nbAnimationSteps;
         const newStep = ++this.horseRunStep % this.nbAnimationSteps;
-        this.renderRoot?.querySelector('#horserun').classList.replace(`horserun${oldStep}`, `horserun${newStep}`);
+        this.renderRoot
+            ?.querySelector('#horserun')
+            .classList.replace(`horserun${oldStep}`, `horserun${newStep}`);
 
         // Update traveled distance
         this.totalDistanceTraveled += this.distanceTraveledByStep;
@@ -104,6 +123,11 @@ export class HorseGame extends LitElement {
 
         // Switch to next step (left or right)
         this.nextStepHasToBeRight = !this.nextStepHasToBeRight;
+
+        // If we arrived
+        if (this.totalDistanceTraveled > this.distanceToRun) {
+            this.finishEvent(Date.now() - this.timer);
+        }
     }
 
     leftHorseShoeClick() {
@@ -119,8 +143,16 @@ export class HorseGame extends LitElement {
     }
 
     quitEvent() {
-        const event = new Event('exitGameEvent', {
-            datas: { foo: 'test' },
+        const event = new CustomEvent('exitGameEvent', {
+            bubbles: true,
+            composed: true,
+        });
+        this.dispatchEvent(event);
+    }
+
+    finishEvent(time) {
+        const event = new CustomEvent('finishGameEvent', {
+            detail: { time },
             bubbles: true,
             composed: true,
         });
