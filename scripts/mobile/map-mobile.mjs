@@ -24,6 +24,10 @@ export class WorldMapMobile extends LitElement {
             height: 100%;
             position: relative;
         }
+
+        .leaflet-control-attribution {
+            display: none;
+        }
     `;
 
     static properties = {
@@ -45,7 +49,6 @@ export class WorldMapMobile extends LitElement {
         this.firstPassedToPositiveLongitude = false;
         this.currentMarkers = undefined;
         this.flagGDGNantesPassed = false;
-        this.globalDistance = 0;
         this._reset = false;
     }
 
@@ -85,7 +88,6 @@ export class WorldMapMobile extends LitElement {
         this.firstPassedToPositiveLongitude = false;
         this.currentMarkers = undefined;
         this.flagGDGNantesPassed = false;
-        this.globalDistance = 0;
         let gdgNantes = this.dictionnaryGDGChapters[GDG_NANTES.id];
         gdgNantes.targetLongitude = gdgNantes.longitude;
         this.centerToPoint(this.service.getCurrentGDG() ?? gdgNantes);
@@ -115,7 +117,6 @@ export class WorldMapMobile extends LitElement {
 
     addDebugHelpers() {
         document.addEventListener('keyup', (event) => {
-            console.log('keyup', event);
             if (
                 event.key === 'ArrowRight' &&
                 this.currentMarkers &&
@@ -128,8 +129,20 @@ export class WorldMapMobile extends LitElement {
                                 marker2.distance - marker1.distance
                         )[0].id
                     ];
-                this.globalDistance += this.currentMarkers[0].distance;
-                this.centerToPoint(gdgToTarget);
+                this.emitGDGHoverEvent(
+                    gdgToTarget,
+                    this.currentMarkers[0].distance
+                );
+                //this.centerToPoint(gdgToTarget);
+                const eventGame = new CustomEvent('debugFinishGameEvent', {
+                    detail: {
+                        time: 50 * 1000,
+                        distance: this.currentMarkers[0].distance,
+                    },
+                    bubbles: true,
+                    composed: true,
+                });
+                this.dispatchEvent(eventGame);
             }
         });
     }
@@ -226,9 +239,6 @@ export class WorldMapMobile extends LitElement {
             this.flagGDGNantesPassed
         ) {
             // Finish the game
-            this.service
-                .finishGame(this.globalDistance)
-                .then(() => console.log('finish'));
             this.emitFinishEvent();
         } else {
             this.flagGDGNantesPassed =
@@ -381,7 +391,6 @@ export class WorldMapMobile extends LitElement {
             console.log(this.firstPassedToPositiveLongitude);
             this.centerToPoint(gdgToTarget);
             this.destination = null;
-            this.globalDistance += data.distance;
             this.requestUpdate();
         } else {
             this.destination = {

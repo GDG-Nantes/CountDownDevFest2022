@@ -5,7 +5,7 @@ export class HorseGame extends LitElement {
         super();
         this.horseRunStep = 0;
         this.nbAnimationSteps = 6;
-        this.distanceTraveledByStep = 500;
+        this.distanceTraveledByStep = 1000;
         this.totalDistanceTraveled = 0;
         this.nextStepHasToBeRight = true;
         this.timer = undefined;
@@ -152,7 +152,7 @@ export class HorseGame extends LitElement {
 
     finishEvent(time) {
         const event = new CustomEvent('finishGameEvent', {
-            detail: { time },
+            detail: { time, distance: this.distanceToRun },
             bubbles: true,
             composed: true,
         });

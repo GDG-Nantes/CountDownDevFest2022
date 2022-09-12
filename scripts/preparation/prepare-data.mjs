@@ -14,6 +14,7 @@ export function prepareData() {
     return fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
         .then((res) => res.json())
         .then((arrayContinents) => {
+            let maxDistance = 0;
             for (let continentA of arrayContinents) {
                 for (let chapterA of continentA.chapters) {
                     if (!chapterA.targetChapters) {
@@ -69,7 +70,10 @@ export function prepareData() {
                             ) {
                                 continue;
                             }
-
+                            maxDistance = Math.max(
+                                maxDistance,
+                                distanceChapters
+                            );
                             // We first add the chapter as a potential target
                             // We will only keep the 10th closer of the chapter
                             chapterA.targetChapters.push({
@@ -89,6 +93,7 @@ export function prepareData() {
                     }
                 }
             }
+            console.log('Max Distance: ', maxDistance);
             return arrayContinents;
         });
 }
