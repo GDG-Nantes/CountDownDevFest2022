@@ -78,17 +78,6 @@ export class Mobile extends LitElement {
                 line-height: 20px;
             }
 
-            .progress {
-                position: relative;
-                background: linear-gradient(
-                    90deg,
-                    var(--primary) 0px,
-                    var(--primary) var(--progress-balloon),
-                    transparent var(--progress-balloon),
-                    transparent 100%
-                );
-            }
-
             .card-ticket {
                 --bottom-card: 50px;
                 --left-card: 50px;
@@ -233,6 +222,7 @@ export class Mobile extends LitElement {
                         this.finishGame(event)}"></train-game>`;
             case GAME_HORSE:
                 return html`<horse-game
+                    .service=${this.service}
                     .distanceToRun=${this.destination.distance * 1000}
                     @exitGameEvent="${() => this.selectGame(0)}"
                     @finishGameEvent="${(event) =>
