@@ -217,6 +217,8 @@ export class Mobile extends LitElement {
         switch (this.game) {
             case GAME_TRAIN:
                 return html`<train-game
+                    .service=${this.service}
+                    .distanceToRun=${this.destination.distance * 1000}
                     @exitGameEvent="${() => this.selectGame(0)}"
                     @finishGameEvent="${(event) =>
                         this.finishGame(event)}"></train-game>`;
@@ -229,16 +231,22 @@ export class Mobile extends LitElement {
                         this.finishGame(event)}"></horse-game>`;
             case GAME_BALOON:
                 return html`<baloon-game
+                    .service=${this.service}
+                    .distanceToRun=${this.destination.distance * 1000}
                     @exitGameEvent="${() => this.selectGame(0)}"
                     @finishGameEvent="${(event) =>
                         this.finishGame(event)}"></baloon-game>`;
             case GAME_SUBMARINE:
                 return html`<submarine-game
+                    .service=${this.service}
+                    .distanceToRun=${this.destination.distance * 1000}
                     @exitGameEvent="${() => this.selectGame(0)}"
                     @finishGameEvent="${(event) =>
                         this.finishGame(event)}"></submarine-game>`;
             case GAME_BOAT:
                 return html`<boat-game
+                    .service=${this.service}
+                    .distanceToRun=${this.destination.distance * 1000}
                     @exitGameEvent="${() => this.selectGame(0)}"
                     @finishGameEvent="${(event) =>
                         this.finishGame(event)}"></boat-game>`;

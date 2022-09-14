@@ -1,26 +1,42 @@
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
+import { GameMixin } from './game-mixin.mjs';
 
-export class BoatGame extends LitElement {
+export class BoatGame extends GameMixin(LitElement) {
     constructor() {
         super();
+        this.distanceTraveledByStep = 1000;
     }
 
     static properties = {};
+    static styles = [this.mixinStyles, css``];
 
     render() {
-        return html`
-            <p>Boat Game</p>
-            <button @click="${this.quitEvent}">Quit</button>
-        `;
+        return this.renderGameSkeleton(
+            this.renderHeader(),
+            this.renderInstruction(),
+            this.renderGame()
+        );
     }
 
-    quitEvent() {
-        const event = new Event('exitGameEvent', {
-            datas: { foo: 'test' },
-            bubbles: true,
-            composed: true,
-        });
-        this.dispatchEvent(event);
+    renderHeader() {
+        return html`Boat Game`;
+    }
+
+    renderInstruction() {
+        return html`<img src="./assets/boat-game/boat.svg" />
+            <div class="">Turn the wheel</div>`;
+    }
+
+    renderGame() {
+        return html` <div>TODO</div>`;
+    }
+
+    runOneStep() {
+        this.startTimer();
+        //TODO
+
+        // Update traveled distance
+        this.incrementDistance(this.distanceTraveledByStep);
     }
 }
 customElements.define('boat-game', BoatGame);
