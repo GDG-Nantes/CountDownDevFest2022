@@ -20,6 +20,8 @@ export class Mobile extends LitElement {
         this.destination = undefined;
         this.endGame = undefined;
         this.resetGame = false;
+        this.timeGame = 0;
+        this.globalDistance = 0;
     }
 
     static styles = [
@@ -76,21 +78,31 @@ export class Mobile extends LitElement {
                 line-height: 20px;
             }
 
-            .progress {
-                position: relative;
-                background: linear-gradient(
-                    90deg,
-                    var(--primary) 0px,
-                    var(--primary) var(--progress-balloon),
-                    transparent var(--progress-balloon),
-                    transparent 100%
-                );
-            }
-
             .card-ticket {
                 --bottom-card: 50px;
                 --left-card: 50px;
                 --witdh-card: calc(100vw - 100px);
+            }
+
+            train-game,
+            horse-game,
+            baloon-game,
+            submarine-game,
+            boat-game {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    var(--tertiary-dark) 0,
+                    var(--tertiary) 30%,
+                    var(--tertiary) 70%,
+                    var(--tertiary-dark) 100%
+                );
+                z-index: 1000;
             }
         `,
     ];
@@ -102,35 +114,31 @@ export class Mobile extends LitElement {
 
     render() {
         return html`
-            ${this.game === 0
-                ? html`
-                      <header>
-                          <p>${this.gdg ? this.gdg.title : ''}</p>
-                          <img
-                              src="${this.service.getUser().photoURL}"
-                              referrerpolicy="no-referrer" />
-                      </header>
-                      <section class="instructions">
-                          Select your destination
-                      </section>
-                      <section class="progress">
-                          <div class="balloon">
-                              <div class="envelope"></div>
-                              <div class="basket"></div>
-                          </div>
-                      </section>
-                      <world-map-mobile
-                          zoom="10"
-                          .continents=${this.continents}
-                          .service=${this.service}
-                          .reset=${this.resetGame}
-                          @finishEvent="${(event) => this.finish(event)}"
-                          @gdgSelectEvent="${(event) => this.selectGDG(event)}"
-                          @gdgHoverEvent="${(event) =>
-                              this.hoverGDG(event)}"></world-map-mobile>
-                      ${this.renderDestination()} ${this.renderEndGame()}
-                  `
-                : this.renderGame()}
+            <header>
+                <p>${this.gdg ? this.gdg.title : ''}</p>
+                <img
+                    src="${this.service.getUser().photoURL}"
+                    referrerpolicy="no-referrer" />
+            </header>
+            <section class="instructions">Select your destination</section>
+            <section class="progress">
+                <div class="balloon">
+                    <div class="envelope"></div>
+                    <div class="basket"></div>
+                </div>
+            </section>
+            <world-map-mobile
+                zoom="10"
+                .continents=${this.continents}
+                .service=${this.service}
+                .reset=${this.resetGame}
+                @finishEvent="${(event) => this.finish(event)}"
+                @gdgSelectEvent="${(event) => this.selectGDG(event)}"
+                @debugFinishGameEvent="${(event) => this.finishGame(event)}"
+                @gdgHoverEvent="${(event) =>
+                    this.hoverGDG(event)}"></world-map-mobile>
+            ${this.renderDestination()} ${this.renderEndGame()}
+            ${this.renderGame()}
         `;
     }
 
@@ -203,25 +211,48 @@ export class Mobile extends LitElement {
     }
 
     renderGame() {
+        if (this.game === 0) {
+            return html``;
+        }
         switch (this.game) {
             case GAME_TRAIN:
                 return html`<train-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></train-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></train-game>`;
             case GAME_HORSE:
                 return html`<horse-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></horse-game>`;
+                    .service=${this.service}
+                    .distanceToRun=${this.destination.distance * 1000}
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></horse-game>`;
             case GAME_BALOON:
                 return html`<baloon-game
-                    @exitGameEvent="${() =>
-                        this.selectGame(0)}"></baloon-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></baloon-game>`;
             case GAME_SUBMARINE:
                 return html`<submarine-game
-                    @exitGameEvent="${() =>
-                        this.selectGame(0)}"></submarine-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></submarine-game>`;
             case GAME_BOAT:
                 return html`<boat-game
-                    @exitGameEvent="${() => this.selectGame(0)}"></boat-game>`;
+                    @exitGameEvent="${() => this.selectGame(0)}"
+                    @finishGameEvent="${(event) =>
+                        this.finishGame(event)}"></boat-game>`;
         }
+    }
+
+    finishGame(event) {
+        console.log('finishGame', event, event.detail);
+        this.timeGame += event.detail.time;
+        this.globalDistance += event.detail.distance;
+        this.selectGame(0);
+        const mapElt =
+            this.renderRoot?.querySelector('world-map-mobile') ?? null;
+        mapElt.clickOnTargetGDG(this.destination, this.destination);
     }
 
     reset() {
@@ -229,6 +260,8 @@ export class Mobile extends LitElement {
         setTimeout(() => {
             this.resetGame = false;
             this.endGame = undefined;
+            this.globalDistance = 0;
+            this.timeGame = 0;
             this.requestUpdate();
         }, 100);
         this.requestUpdate();
@@ -255,10 +288,15 @@ export class Mobile extends LitElement {
     }
 
     finish(event) {
+        const days = Math.round((this.timeGame / 1000) * 0.5);
         this.endGame = {
-            ...event.detail,
+            distance: this.globalDistance,
+            days,
         };
         this.requestUpdate();
+        this.service
+            .finishGame(this.globalDistance)
+            .then(() => console.log('finish'));
     }
 
     calculateProgress(gdg) {

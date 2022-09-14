@@ -107,3 +107,6 @@ dist
 build
 config/secrets.mjs
 scripts/firebase/firebase-config.mjs
+
+# Editors files and folders
+.idea/

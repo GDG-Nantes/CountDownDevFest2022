@@ -170,6 +170,17 @@ export const balloonCss = css`
         --progress-balloon: 0px;
     }
 
+    .progress {
+        position: relative;
+        background: linear-gradient(
+            90deg,
+            var(--primary) 0px,
+            var(--primary) var(--progress-balloon),
+            var(--secondary) var(--progress-balloon),
+            var(--secondary) 100%
+        );
+    }
+
     .balloon {
         display: block;
         position: absolute;
