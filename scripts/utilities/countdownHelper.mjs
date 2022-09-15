@@ -14,6 +14,9 @@ export class CountDownHelper {
         this.opacityElt = opacityElt;
         // We start the timer (countdwon)
         this.timer = new Timer(this.callbackTimer.bind(this));
+
+        this.songIndex = +localStorage.getItem('songIndex') ?? 0;
+        this.startSong();
     }
 
     /**

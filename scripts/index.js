@@ -12,6 +12,7 @@ class Main extends LitElement {
         this.service = new GlobalService();
         this.logged = undefined;
         this.admin = false;
+        this.clickForSong = false;
         prepareData().then((continents) => {
             this.continents = continents;
             this.requestUpdate();
@@ -62,15 +63,22 @@ class Main extends LitElement {
             ? html`<count-down-mobile
                   .continents=${this.continents}
                   .service=${this.service}></count-down-mobile>`
-            : html`<count-down
+            : this.clickForSong
+            ? html`<count-down
                   .continents=${this.continents}
-                  .service=${this.service}></count-down>`}`;
+                  .service=${this.service}></count-down>`
+            : html`<button @click="${() => this.click()}">clickMe</button>`}`;
     }
 
     render() {
         return html`${this.continents
             ? html`${this.logged ? this.renderGame() : html`login...`}`
             : html`loading...`}`;
+    }
+
+    click() {
+        this.clickForSong = true;
+        this.requestUpdate();
     }
 }
 customElements.define('count-down-main', Main);
