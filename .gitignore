@@ -110,3 +110,5 @@ scripts/firebase/firebase-config.mjs
 
 # Editors files and folders
 .idea/
+
+assets/songs
