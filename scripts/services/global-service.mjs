@@ -1,4 +1,3 @@
-import { initializeApp } from 'firebase/app';
 import {
     getFirestore,
     collection,
@@ -13,11 +12,15 @@ import {
 import { firebaseApp } from '../firebase/config.mjs';
 import {
     GoogleAuthProvider,
+    GithubAuthProvider,
     signInWithPopup,
     getAuth,
     onAuthStateChanged,
 } from 'firebase/auth';
 import { toDataURL } from '../utilities/helpers.mjs';
+
+const GOOGLE_PROVIDER = 1;
+const GITHUB_PROVIDER = 2;
 
 export class GlobalService {
     constructor() {
@@ -40,8 +43,8 @@ export class GlobalService {
 
     checkLogin(callBackUser) {
         return new Promise((resolve, reject) => {
-            const auth = getAuth();
-            onAuthStateChanged(auth, (user) => {
+            const fbAuth = getAuth();
+            onAuthStateChanged(fbAuth, (user) => {
                 if (user) {
                     this.user = user;
                     toDataURL(this.user.photoURL).then(
@@ -67,33 +70,37 @@ export class GlobalService {
         });
     }
 
-    login() {
-        const provider = new GoogleAuthProvider();
-        const auth = getAuth();
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential =
-                    GoogleAuthProvider.credentialFromResult(result);
-                const token = credential.accessToken;
-                // The signed-in user info.
-                this.user = result.user;
-                toDataURL(this.user.photoURL).then(
-                    (base64User) => (this.base64User = base64User)
-                );
-                // ...
-            })
-            .catch((error) => {
-                // Handle Errors here.
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                // The email of the user's account used.
-                const email = error.customData.email;
-                // The AuthCredential type that was used.
-                const credential =
-                    GoogleAuthProvider.credentialFromError(error);
-                // ...
-            });
+    login(providerChoose) {
+        return new Promise((resolve, reject) => {
+            const provider =
+                providerChoose === GOOGLE_PROVIDER
+                    ? new GoogleAuthProvider()
+                    : new GithubAuthProvider();
+            const fbAuth = getAuth();
+            signInWithPopup(fbAuth, provider)
+                .then((result) => {
+                    console.log('Post Sign in With Popup');
+                    // The signed-in user info.
+                    this.user = result.user;
+                    toDataURL(this.user.photoURL).then(
+                        (base64User) => (this.base64User = base64User)
+                    );
+                    this.checkAdmin()
+                        .then(() => {
+                            resolve({ ...result.user, admin: true });
+                            console.log('Admin');
+                        })
+                        .catch((err) => {
+                            console.log('Not Admin', err);
+                            resolve({ ...result.user, admin: false });
+                        });
+                    // ...
+                })
+                .catch((error) => {
+                    console.log('error login', error);
+                    reject();
+                });
+        });
     }
 
     checkAdmin() {
