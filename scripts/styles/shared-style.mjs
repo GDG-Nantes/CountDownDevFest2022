@@ -168,6 +168,7 @@ export const balloonCss = css`
         --color-basket: #ceb89f;
         --size-balloon: 1rem;
         --progress-balloon: 0px;
+        --top-balloon: 0px;
     }
 
     .progress {
@@ -184,7 +185,7 @@ export const balloonCss = css`
     .balloon {
         display: block;
         position: absolute;
-        top: 0;
+        top: var(--top-balloon);
         left: var(--progress-balloon);
         transform: translate(-50%, -50%);
         perspective-origin: 50% 100%;
