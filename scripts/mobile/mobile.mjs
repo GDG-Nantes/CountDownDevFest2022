@@ -39,7 +39,7 @@ export class Mobile extends LitElement {
                 left: 0;
                 display: grid;
                 grid-template-columns: 1fr;
-                grid-template-rows: 50px 20px 20px 1fr;
+                grid-template-rows: 50px 40px 20px 1fr;
                 font-family: 'RumbleBrave';
                 --header-height: 50px;
                 --progress-balloon: 0px;
@@ -76,7 +76,8 @@ export class Mobile extends LitElement {
 
             .instructions {
                 text-align: center;
-                line-height: 20px;
+                line-height: 40px;
+                font-size: 1.2rem;
             }
 
             .card-ticket {
@@ -174,7 +175,7 @@ export class Mobile extends LitElement {
                     src="${this.service.getUser().photoURL}"
                     referrerpolicy="no-referrer" />
             </header>
-            <section class="instructions">Select your destination</section>
+            <section class="instructions">Select your next destination</section>
             <section class="progress">
                 <div class="balloon">
                     <div class="envelope"></div>

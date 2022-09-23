@@ -37,7 +37,7 @@ export class BaloonGame extends GameMixin(LitElement) {
                 position: relative;
                 display: grid;
                 grid-template-columns: 1fr;
-                grid-template-rows: 1fr 200px;
+                grid-template-rows: 1fr 100px;
                 width: 100%;
                 height: 100%;
                 --size-balloon: 15rem;
@@ -50,7 +50,7 @@ export class BaloonGame extends GameMixin(LitElement) {
 
             .main-balloon .balloon {
                 top: initial;
-                --bottom-balloon: -170px;
+                --bottom-balloon: -70px;
                 bottom: var(--bottom-balloon);
             }
 
@@ -69,6 +69,17 @@ export class BaloonGame extends GameMixin(LitElement) {
                 flex-direction: row;
                 align-items: center;
             }
+
+            .blow-instruction {
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                font-size: 2rem;
+                display: flex;
+                align-items: center;
+                align-content: center;
+                justify-content: center;
+            }
         `,
     ];
 
@@ -86,14 +97,16 @@ export class BaloonGame extends GameMixin(LitElement) {
 
     renderInstruction() {
         return html`<img src="./assets/baloon-game/air-baloon.svg" />
-            <div class="">Blow on your phone</div>`;
+            <div class="">Blow on your phone 🌬</div>`;
     }
 
     renderGame() {
         return html`
             ${this.blowStarted
                 ? this.renderGameArea()
-                : html`<div @click="${() => this.startBlow()}">
+                : html`<div
+                      class="blow-instruction"
+                      @click="${() => this.startBlow()}">
                       Click to Start Blowing
                   </div>`}
         `;

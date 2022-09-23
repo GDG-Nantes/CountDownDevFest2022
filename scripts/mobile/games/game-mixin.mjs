@@ -53,10 +53,32 @@ export const GameMixin = (superclass) =>
                     grid-template-columns: var(--icon-width) 1fr;
                     grid-template-rows: 1fr;
                     align-items: center;
+                    text-align: center;
+                    font-size: 2rem;
                 }
 
                 .instructions img {
                     width: var(--icon-width);
+                    border-right: thin dotted #333;
+                }
+
+                #distanceTraveled {
+                    position: relative;
+                    font-size: 1rem;
+                    text-align: center;
+                    line-height: 20px;
+                    margin-bottom: 10px;
+                }
+
+                #distanceTraveled::after {
+                    content: '';
+                    width: 90vw;
+                    height: 1px;
+                    position: absolute;
+                    left: 50%;
+                    bottom: -8px;
+                    margin-left: -45vw;
+                    border-bottom: thin dotted #333;
                 }
             `,
         ];
@@ -102,7 +124,7 @@ export const GameMixin = (superclass) =>
         renderGameSkeleton(header, instruction, game) {
             return html`
                 <header>
-                    <p>${header}</p>
+                    <p @click="${() => this.quitEvent()}">←${header}</p>
                     <img
                         src="${this.service.getUser().photoURL}"
                         referrerpolicy="no-referrer" />
@@ -115,7 +137,10 @@ export const GameMixin = (superclass) =>
                         <div class="basket"></div>
                     </div>
                 </section>
-                <div id="distanceTraveled">${this.totalDistanceTraveled}m</div>
+                <div id="distanceTraveled">
+                    distance traveled: ${this.totalDistanceTraveled}m /
+                    ${this.distanceToRun}m 🏁
+                </div>
                 <section class="game">${game}</section>
             `;
         }

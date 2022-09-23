@@ -140,6 +140,7 @@ export class GlobalService {
                     finish: false,
                     name: this.user.displayName,
                     distance: 99999999,
+                    days: 99999999,
                 };
 
                 if (docTmp.exists()) {
@@ -147,6 +148,10 @@ export class GlobalService {
                         docTmp.data().distance
                             ? docTmp.data().distance
                             : 99999999,
+                        99999999
+                    );
+                    docToWrite.days = Math.min(
+                        docTmp.data().days ? docTmp.data().days : 99999999,
                         99999999
                     );
                     docToWrite.finish = !!docTmp.data().finish;

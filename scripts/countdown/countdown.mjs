@@ -38,9 +38,19 @@ export class CountDown extends LitElement {
                 --right-card: 50px;
                 --top-card: 100px;
             }
+
+            .logo-devfest {
+                position: absolute;
+                top: 15px;
+                height: 175px;
+                width: 400px;
+                z-index: 999;
+                left: 50%;
+                margin-left: -200px;
+            }
             .countdown {
                 position: absolute;
-                top: 60px;
+                top: calc(15px + 175px + 10px);
                 width: 100vw;
                 text-align: center;
                 z-index: 999;
@@ -106,6 +116,7 @@ export class CountDown extends LitElement {
 
     render() {
         return html`
+            <img class="logo-devfest" src="./assets/images/logo_couleur.svg" />
             <section class="countdown">00:00:00</section>
             <div class="card-ticket scoring">
                 <div class="ticket">

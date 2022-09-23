@@ -153,6 +153,7 @@ export class WorldMap extends LitElement {
             longitude: documentUpdate.longitude,
             finish: documentUpdate.finish,
             distance: documentUpdate.distance,
+            days: documentUpdate.days,
             name: documentUpdate.name,
         });
         const users = [...this.userMap.values()];
@@ -163,7 +164,7 @@ export class WorldMap extends LitElement {
     emitTopUsersEvent(users) {
         const filterUsers = users
             .filter((user) => user.finish)
-            .sort((user1, user2) => user2.distance - user1.distance)
+            .sort((user1, user2) => user2.days - user1.days)
             .slice(0, 9);
         if (filterUsers.length > 0) {
             const event = new CustomEvent('topUsersEvent', {
