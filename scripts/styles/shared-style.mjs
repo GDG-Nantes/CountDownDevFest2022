@@ -1,5 +1,36 @@
 import { css } from 'lit';
 
+export const buttonCss = css`
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-sizing: border-box;
+        outline: 0px;
+        border: 0px;
+        margin: 0px;
+        cursor: pointer;
+        user-select: none;
+        vertical-align: middle;
+        appearance: none;
+        text-decoration: none;
+        font-family: Roboto, Helvetica, Arial, sans-serif;
+        font-weight: 500;
+        font-size: 0.875rem;
+        line-height: 1.75;
+        letter-spacing: 0.02857em;
+        text-transform: uppercase;
+        min-width: 64px;
+        padding: 6px 16px;
+        border-radius: 4px;
+        color: rgb(255, 255, 255);
+        background-color: var(--primary);
+        box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
+            rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+    }
+`;
+
 export const ticketCss = css`
     :host {
         --bottom-card: initial;

@@ -179,13 +179,14 @@ export class GlobalService {
         );
     }
 
-    finishGame(distance) {
+    finishGame(distance, days) {
         return new Promise((resolve, reject) =>
             this.getCurrentUser().then((docUser) =>
                 setDoc(doc(this.db, 'travel', this.user.uid), {
                     ...docUser,
                     finish: true,
                     distance,
+                    days,
                 })
                     .then(() => {
                         console.log('Write new position');

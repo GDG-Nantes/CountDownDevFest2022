@@ -370,13 +370,14 @@ export class WorldMapMobile extends LitElement {
     }
 
     clickMarkerCallback(event) {
+        event.stopPropagation();
         const gdgToTarget =
             this.dictionnaryGDGChapters[event.currentTarget.id.substring(1)];
         this.clickOnTargetGDG(gdgToTarget, event.currentTarget.__data__);
     }
 
     clickOnTargetGDG(gdgToTarget, data) {
-        if (this.destination && this.destination.id === gdgToTarget.id) {
+        /*if (this.destination && this.destination.id === gdgToTarget.id) {
             if (
                 this.firstPassedToPositiveLongitude &&
                 !this.exceedMiddleEarth &&
@@ -392,14 +393,14 @@ export class WorldMapMobile extends LitElement {
             this.centerToPoint(gdgToTarget);
             this.destination = null;
             this.requestUpdate();
-        } else {
-            this.destination = {
-                ...gdgToTarget,
-                distance: data.distance,
-            };
-            this.emitGDGHoverEvent(gdgToTarget, data.distance);
-            this.requestUpdate();
-        }
+        } else {*/
+        this.destination = {
+            ...gdgToTarget,
+            distance: data.distance,
+        };
+        this.emitGDGHoverEvent(gdgToTarget, data.distance);
+        this.requestUpdate();
+        //}
     }
 
     reworkCoordinatesOfTarget(gdg, target) {

@@ -28,8 +28,10 @@ export class CountDown extends LitElement {
                 text-align: center;
                 z-index: 999;
                 font-size: 2rem;
+                text-shadow: #777 8px 8px 15px;
             }
             .scoring {
+                font-size: 1.5rem;
                 position: absolute;
                 --witdh-card: 250px;
                 --height-card: calc(100vh - 200px);
@@ -38,11 +40,12 @@ export class CountDown extends LitElement {
             }
             .countdown {
                 position: absolute;
-                top: 150px;
+                top: 60px;
                 width: 100vw;
                 text-align: center;
                 z-index: 999;
                 font-size: 5rem;
+                text-shadow: #777 8px 8px 15px;
             }
 
             .card-ticket .ticket .ticket-wrapper .ticket-body {
@@ -50,7 +53,11 @@ export class CountDown extends LitElement {
             }
 
             .top-users {
-                text-align: right;
+                text-align: center;
+            }
+
+            .top-user {
+                margin: 15px 0;
             }
 
             /* LEAVE AT BOTTOM OF CSS FILE */
@@ -112,10 +119,14 @@ export class CountDown extends LitElement {
                                     ? ''
                                     : this.topUsers.map(
                                           (user) => html`
-                                              <span
-                                                  >${user.name} :
-                                                  ${user.distance}km</span
-                                              >
+                                              <div class="top-user">
+                                                  <span>${user.name} :</span>
+                                                  <br />
+                                                  <span
+                                                      >&nbsp;&nbsp;&nbsp;${user.distance}km
+                                                      / ${user.days}</span
+                                                  >
+                                              </div>
                                           `
                                       )}
                             </div>

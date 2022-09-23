@@ -5,7 +5,7 @@ import { BaloonGame } from './games/baloon.mjs';
 import { SubmarineGame } from './games/submarine.mjs';
 import { BoatGame } from './games/boat.mjs';
 import { WorldMapMobile } from './map-mobile.mjs';
-import { balloonCss, ticketCss } from '../styles/shared-style.mjs';
+import { buttonCss, balloonCss, ticketCss } from '../styles/shared-style.mjs';
 
 const GAME_TRAIN = 1;
 const GAME_HORSE = 2;
@@ -25,6 +25,7 @@ export class Mobile extends LitElement {
     }
 
     static styles = [
+        buttonCss,
         balloonCss,
         ticketCss,
         css`
@@ -82,6 +83,12 @@ export class Mobile extends LitElement {
                 --bottom-card: 50px;
                 --left-card: 50px;
                 --witdh-card: calc(100vw - 100px);
+                --height-card: 400px;
+            }
+
+            .card-ticket .ticket::after,
+            .card-ticket .ticket .ticket-wrapper::after {
+                display: none;
             }
 
             train-game,
@@ -103,6 +110,53 @@ export class Mobile extends LitElement {
                     var(--tertiary-dark) 100%
                 );
                 z-index: 1000;
+            }
+
+            button {
+                margin: 5px;
+            }
+
+            button .icon.icon-balloon {
+                -webkit-mask: url(./assets/baloon-game/air-baloon.svg) no-repeat
+                    50% 50%;
+                mask: url(./assets/baloon-game/air-baloon.svg) no-repeat 50% 50%;
+                -webkit-mask-size: cover;
+                mask-size: cover;
+            }
+            button .icon.icon-horse {
+                -webkit-mask: url(./assets/horse-game/horse.svg) no-repeat 50%
+                    50%;
+                mask: url(./assets/horse-game/horse.svg) no-repeat 50% 50%;
+                -webkit-mask-size: cover;
+                mask-size: cover;
+            }
+            button .icon.icon-train {
+                -webkit-mask: url(./assets/train-game/train.svg) no-repeat 50%
+                    50%;
+                mask: url(./assets/train-game/train.svg) no-repeat 50% 50%;
+                -webkit-mask-size: cover;
+                mask-size: cover;
+            }
+            button .icon.icon-boat {
+                -webkit-mask: url(./assets/boat-game/boat.svg) no-repeat 50% 50%;
+                mask: url(./assets/boat-game/boat.svg) no-repeat 50% 50%;
+                -webkit-mask-size: cover;
+                mask-size: cover;
+            }
+            button .icon.icon-submarine {
+                -webkit-mask: url(./assets/submarine-game/submarine.svg)
+                    no-repeat 50% 50%;
+                mask: url(./assets/submarine-game/submarine.svg) no-repeat 50%
+                    50%;
+                -webkit-mask-size: cover;
+                mask-size: cover;
+            }
+
+            button .icon {
+                width: 30px;
+                height: 30px;
+                margin-right: 5px;
+                background-color: white;
             }
         `,
     ];
@@ -132,6 +186,7 @@ export class Mobile extends LitElement {
                 .continents=${this.continents}
                 .service=${this.service}
                 .reset=${this.resetGame}
+                @click=${(event) => this.clikOutside(event)}
                 @finishEvent="${(event) => this.finish(event)}"
                 @gdgSelectEvent="${(event) => this.selectGDG(event)}"
                 @debugFinishGameEvent="${(event) => this.finishGame(event)}"
@@ -159,24 +214,29 @@ export class Mobile extends LitElement {
                         <div class="buttons-area">
                             <button
                                 @click="${() => this.selectGame(GAME_TRAIN)}">
-                                Train Game
+                                <i class="icon icon-train"></i>
+                                Train
                             </button>
                             <button
                                 @click="${() => this.selectGame(GAME_HORSE)}">
-                                Horse Game
+                                <i class="icon icon-horse"></i>
+                                Horse
                             </button>
                             <button
                                 @click="${() => this.selectGame(GAME_BALOON)}">
-                                Baloon Game
+                                <i class="icon icon-balloon"></i>
+                                Baloon
                             </button>
                             <button
                                 @click="${() =>
                                     this.selectGame(GAME_SUBMARINE)}">
-                                Submarine Game
+                                <i class="icon icon-submarine"></i>
+                                Submarine
                             </button>
                             <button
                                 @click="${() => this.selectGame(GAME_BOAT)}">
-                                Boat Game
+                                <i class="icon icon-boat"></i>
+                                Boat
                             </button>
                         </div>
                     </div>
@@ -287,6 +347,14 @@ export class Mobile extends LitElement {
         this.requestUpdate();
     }
 
+    clikOutside(event) {
+        console.log('clickOutside', this.destination);
+        if (this.destination) {
+            this.destination = undefined;
+            this.requestUpdate();
+        }
+    }
+
     hoverGDG(event) {
         this.destination = {
             ...event.detail.gdg,
@@ -303,7 +371,7 @@ export class Mobile extends LitElement {
         };
         this.requestUpdate();
         this.service
-            .finishGame(this.globalDistance)
+            .finishGame(this.globalDistance, days)
             .then(() => console.log('finish'));
     }
 

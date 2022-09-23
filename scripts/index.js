@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { buttonCss } from './styles/shared-style.mjs';
 import { CountDown } from './countdown/countdown';
 import { Mobile } from './mobile/mobile';
 import { prepareData } from './preparation/prepare-data.mjs';
@@ -37,139 +38,145 @@ class Main extends LitElement {
             });
     }
 
-    static styles = css`
-        :host {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            top: 0;
-            left: 0;
-            background: linear-gradient(
-                var(--tertiary-dark) 0,
-                var(--tertiary) 30%,
-                var(--tertiary) 70%,
-                var(--tertiary-dark) 100%
-            );
-            display: grid;
-            grid-template-rows: 1fr;
-            grid-template-columns: 200px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        h1 {
-            margin: 0;
-            padding: 0;
-            font-family: ‘Arial Narrow’, sans-serif;
-            font-weight: 100;
-            font-size: 1.1em;
-        }
-
-        span {
-            position: relative;
-            top: 0.63em;
-            display: inline-block;
-            text-transform: uppercase;
-            opacity: 0;
-            transform: rotateX(-90deg);
-        }
-
-        .let1 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.2s;
-        }
-
-        .let2 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.3s;
-        }
-
-        .let3 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.4s;
-        }
-
-        .let4 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.5s;
-        }
-
-        .let5 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.6s;
-        }
-
-        .let6 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.7s;
-        }
-
-        .let7 {
-            animation: drop 1.2s ease-in-out infinite;
-            animation-delay: 1.8s;
-        }
-
-        @keyframes drop {
-            10% {
-                opacity: 0.5;
+    static styles = [
+        buttonCss,
+        css`
+            :host {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                top: 0;
+                left: 0;
+                background: linear-gradient(
+                    var(--tertiary-dark) 0,
+                    var(--tertiary) 30%,
+                    var(--tertiary) 70%,
+                    var(--tertiary-dark) 100%
+                );
+                display: grid;
+                grid-template-rows: 1fr;
+                grid-template-columns: 200px;
+                align-items: center;
+                justify-content: center;
             }
-            20% {
-                opacity: 1;
-                top: 3.78em;
-                transform: rotateX(-360deg);
+
+            h1 {
+                margin: 0;
+                padding: 0;
+                font-family: ‘Arial Narrow’, sans-serif;
+                font-weight: 100;
+                font-size: 1.1em;
             }
-            80% {
-                opacity: 1;
-                top: 3.78em;
-                transform: rotateX(-360deg);
-            }
-            90% {
-                opacity: 0.5;
-            }
-            100% {
+
+            span {
+                position: relative;
+                top: 0.63em;
+                display: inline-block;
+                text-transform: uppercase;
                 opacity: 0;
-                top: 6.94em;
+                transform: rotateX(-90deg);
             }
-        }
 
-        .login-container {
-            display: flex;
-            justify-content: space-evenly;
-            align-content: center;
-            align-items: center;
-            flex-direction: column;
-            width: 160px;
-        }
+            .let1 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.2s;
+            }
 
-        .login-container h1 {
-            text-align: center;
-            font-family: RumbleBrave;
-            margin-bottom: 15px;
-        }
+            .let2 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.3s;
+            }
 
-        .login-btn {
-            border: thin solid black;
-            width: 160px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-            display: flex;
-            justify-content: space-evenly;
-            align-content: center;
-            align-items: center;
-        }
+            .let3 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.4s;
+            }
 
-        .github-login {
-            background-color: black;
-            color: white;
-        }
+            .let4 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.5s;
+            }
 
-        .google-login {
-            background-color: lightgray;
-        }
-    `;
+            .let5 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.6s;
+            }
+
+            .let6 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.7s;
+            }
+
+            .let7 {
+                animation: drop 1.2s ease-in-out infinite;
+                animation-delay: 1.8s;
+            }
+
+            @keyframes drop {
+                10% {
+                    opacity: 0.5;
+                }
+                20% {
+                    opacity: 1;
+                    top: 3.78em;
+                    transform: rotateX(-360deg);
+                }
+                80% {
+                    opacity: 1;
+                    top: 3.78em;
+                    transform: rotateX(-360deg);
+                }
+                90% {
+                    opacity: 0.5;
+                }
+                100% {
+                    opacity: 0;
+                    top: 6.94em;
+                }
+            }
+
+            .login-container {
+                display: flex;
+                justify-content: space-evenly;
+                align-content: center;
+                align-items: center;
+                flex-direction: column;
+                width: 160px;
+            }
+
+            .login-container h1 {
+                text-align: center;
+                font-family: RumbleBrave;
+                margin-bottom: 15px;
+            }
+
+            .login-btn {
+                border: thin solid black;
+                width: 160px;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                text-align: center;
+                display: flex;
+                justify-content: space-evenly;
+                align-content: center;
+                align-items: center;
+                box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
+                    rgb(0 0 0 / 14%) 0px 2px 2px 0px,
+                    rgb(0 0 0 / 12%) 0px 1px 5px 0px;
+            }
+
+            .github-login {
+                background-color: black;
+                color: white;
+            }
+
+            .google-login {
+                background-color: lightgray;
+            }
+        `,
+    ];
 
     /**
      *
