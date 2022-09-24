@@ -112,3 +112,5 @@ scripts/firebase/firebase-config.mjs
 .idea/
 
 assets/songs
+
+.firebase/
