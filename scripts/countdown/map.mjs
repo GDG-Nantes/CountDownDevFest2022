@@ -28,7 +28,6 @@ export class WorldMap extends LitElement {
 
     static properties = {
         zoom: { type: Number },
-        //sizePoint: { type: Number, attribute: 'size-point' },
         continents: { type: Array },
         service: { type: Object },
     };
@@ -39,6 +38,56 @@ export class WorldMap extends LitElement {
         this.sizePoint = 0.1; //0.1;
         this.userList = [];
         this.userMap = new Map();
+    }
+
+    prefTest() {
+        const base64JF =
+            'data:image/jpeg;base64,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';
+        const fakeUsers = [];
+        const NB_USERS = 500;
+
+        const keysGDG = Object.keys(this.dictionnaryGDGChapters);
+        function getGDG() {
+            let tmpGDG = undefined;
+            do {
+                tmpGDG =
+                    this.dictionnaryGDGChapters[
+                        Math.round(Math.random() * keysGDG.length)
+                    ];
+            } while (!tmpGDG);
+            return tmpGDG;
+        }
+
+        for (let i = 0; i < NB_USERS; i++) {
+            const tmpGDG = getGDG.bind(this)();
+            fakeUsers.push({
+                base64: base64JF,
+                finish: false,
+                latitude: tmpGDG.latitude,
+                longitude: tmpGDG.longitude,
+                distance: 0,
+                days: 0,
+                name: 'user' + i,
+                uid: 'uid' + i,
+            });
+        }
+
+        const stopInterval = setInterval(() => {
+            const fakeUser1 =
+                fakeUsers[Math.round(Math.random() * fakeUsers.length)];
+            const fakeUser2 =
+                fakeUsers[Math.round(Math.random() * fakeUsers.length)];
+            const gdgTmp1 = getGDG.bind(this)();
+            fakeUser1.latitude = gdgTmp1.latitude;
+            fakeUser1.longitude = gdgTmp1.longitude;
+            this.updateCallback(fakeUser1);
+            const gdgTmp2 = getGDG.bind(this)();
+            fakeUser2.latitude = gdgTmp2.latitude;
+            fakeUser2.longitude = gdgTmp2.longitude;
+            this.updateCallback(fakeUser2);
+        }, 50);
+
+        setTimeout(() => clearInterval(stopInterval), 30_000);
     }
 
     firstUpdated() {
@@ -82,7 +131,11 @@ export class WorldMap extends LitElement {
         gdg.targetLongitude = gdg.longitude;
         this.centerToPoint(gdg);
         this.prepareSvg();
-        //this.showMarkers(this.continents);
+
+        // To un comment to challenge perfs
+        /*setTimeout(() => {
+            this.prefTest();
+        }, 1000);*/
     }
 
     prepareSvg() {

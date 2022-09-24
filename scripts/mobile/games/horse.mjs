@@ -63,11 +63,15 @@ export class HorseGame extends GameMixin(LitElement) {
                 border: 0;
                 width: 30vw;
                 height: 15vh;
-                background: url(../../../assets/horse-game/horseshoe.svg)
-                    no-repeat;
+                -webkit-mask: url(./assets/horse-game/horseshoe.svg) no-repeat
+                    50% 50%;
+                mask: url(./assets/horse-game/horseshoe.svg) no-repeat 50% 50%;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                background-color: var(--primary-dark);
             }
             #horseshoes button.colored {
-                color: #c14d32;
+                background-color: var(--primary);
                 font-weight: bold;
                 text-decoration: underline;
             }
@@ -105,15 +109,15 @@ export class HorseGame extends GameMixin(LitElement) {
                 <button
                     id="horseLeftShoe"
                     @click="${() => this.leftHorseShoeClick()}"
-                    class="${!this.nextStepHasToBeRight ? 'colored' : ''}">
-                    Gauche
-                </button>
+                    class="${!this.nextStepHasToBeRight
+                        ? 'colored'
+                        : ''}"></button>
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"
-                    class="${this.nextStepHasToBeRight ? 'colored' : ''}">
-                    Droite
-                </button>
+                    class="${this.nextStepHasToBeRight
+                        ? 'colored'
+                        : ''}"></button>
             </div>`;
     }
 

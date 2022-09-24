@@ -24,9 +24,9 @@ export class BaloonGame extends GameMixin(LitElement) {
         this.freqMin = 0; // Mininum Frequency to watch
         this.freqMax = 29500; // Maximum Frequency to watch
 
-        this.iterationThreadshold = 60;
+        this.iterationThreadshold = 40;
         this.iterationOverThreshold = 0;
-        this.gameSoundThreshold = 170;
+        this.gameSoundThreshold = 190;
     }
 
     static properties = {};
@@ -196,7 +196,14 @@ export class BaloonGame extends GameMixin(LitElement) {
         this.analyser.getByteFrequencyData(this.dataArray);
         //const displayFreq = [];
         let max = -Infinity;
-        for (let i = 0; i < this.bufferLength; i++) {
+        let overThreashold = true;
+        let sum = 0;
+        for (let i = 0; i < 4; i++) {
+            const barHeight = this.dataArray[i] / 2 + 100;
+            sum += barHeight;
+        }
+        max = sum / 4;
+        /*for (let i = 0; i < this.bufferLength; i++) {
             const barHeight = this.dataArray[i] / 2 + 100;
             if (barHeight > max) {
                 max = barHeight;
@@ -206,8 +213,9 @@ export class BaloonGame extends GameMixin(LitElement) {
             //canvasCtx.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight);
 
             //x += barWidth + 1;
-        }
+        }*/
         if (max > this.gameSoundThreshold) {
+            //if (overThreashold) {
             this.iterationOverThreshold++;
         } else {
             this.iterationOverThreshold = 0;
