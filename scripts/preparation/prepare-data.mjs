@@ -1,20 +1,31 @@
 //import fetch from 'node-fetch';
 
+import { calculateDistanceBetweenToPoints } from '../utilities/helpers.mjs';
+
 const ID_CONTINENT_AFRICA = 1;
 const ID_CONTINENT_EUROPE = 2;
 const ID_CONTINENT_ASIA = 3;
 const ID_CONTINENT_SOUTH_AMERICA = 4;
 const ID_CONTINENT_NORTH_AMERICA = 5;
 
+const DEBUG = false;
+
 /**
  * Retrieve the chapters and their targets
  * @returns The continents with next points to target
  */
 export function prepareData() {
+    /**
+     * FOR DEBUG
+     */
+    let maxDistance = 0;
+    let realMaxDistance = 0;
+    let sourceGDG = undefined;
+    let targetGDG = undefined;
+    // END DEBUG
     return fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
         .then((res) => res.json())
         .then((arrayContinents) => {
-            let maxDistance = 0;
             for (let continentA of arrayContinents) {
                 for (let chapterA of continentA.chapters) {
                     if (!chapterA.targetChapters) {
@@ -70,10 +81,7 @@ export function prepareData() {
                             ) {
                                 continue;
                             }
-                            maxDistance = Math.max(
-                                maxDistance,
-                                distanceChapters
-                            );
+
                             // We first add the chapter as a potential target
                             // We will only keep the 10th closer of the chapter
                             chapterA.targetChapters.push({
@@ -90,10 +98,46 @@ export function prepareData() {
                                 targetChapterB.distance
                         );
                         chapterA.targetChapters = orderByDistance.slice(0, 10);
+                        /**
+                         * For debug
+                         */
+                        let realDistance = undefined;
+                        if (DEBUG) {
+                            for (let chapterTmp of chapterA.targetChapters) {
+                                realDistance = calculateDistanceBetweenToPoints(
+                                    chapterA,
+                                    chapterTmp.targetChapter
+                                );
+                                maxDistance = Math.max(
+                                    +maxDistance,
+                                    +chapterTmp.distance
+                                );
+                                if (realDistance > realMaxDistance) {
+                                    sourceGDG = chapterA;
+                                    targetGDG = chapterTmp.targetChapter;
+                                }
+                                realMaxDistance = Math.max(
+                                    +realMaxDistance,
+                                    +realDistance
+                                );
+                            }
+                        }
+                        // END debug
                     }
                 }
             }
-            console.log('Max Distance: ', maxDistance);
+            if (DEBUG) {
+                console.log(
+                    'Max Distance: ',
+                    maxDistance,
+                    'Real distance :',
+                    realMaxDistance,
+                    'Source GDG : ',
+                    sourceGDG,
+                    'target GDG : ',
+                    targetGDG
+                );
+            }
             return arrayContinents;
         });
 }

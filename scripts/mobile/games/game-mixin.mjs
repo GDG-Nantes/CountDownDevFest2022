@@ -117,6 +117,7 @@ export const GameMixin = (superclass) =>
 
             // If we arrived
             if (this.totalDistanceTraveled > this.distanceToRun) {
+                console.log('Game Finish in : ' + (Date.now() - this.timer));
                 this.finishEvent(Date.now() - this.timer);
             }
         }

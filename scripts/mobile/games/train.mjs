@@ -4,7 +4,7 @@ import { GameMixin } from './game-mixin.mjs';
 export class TrainGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 1000;
+        this.distanceTraveledByStep = 6000;
     }
 
     static properties = {};
@@ -57,7 +57,7 @@ export class TrainGame extends GameMixin(LitElement) {
 
             .floor {
                 background-color: #362f2d;
-                height: 30px;
+                height: 150px;
                 width: 100%;
                 position: absolute;
                 bottom: 0;

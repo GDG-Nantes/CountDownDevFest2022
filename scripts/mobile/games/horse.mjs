@@ -6,7 +6,7 @@ export class HorseGame extends GameMixin(LitElement) {
         super();
         this.horseRunStep = 0;
         this.nbAnimationSteps = 6;
-        this.distanceTraveledByStep = 1000;
+        this.distanceTraveledByStep = 1500;
         this.nextStepHasToBeRight = true;
     }
 
