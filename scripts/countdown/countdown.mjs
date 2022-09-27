@@ -64,6 +64,7 @@ export class CountDown extends LitElement {
 
             .top-users {
                 text-align: center;
+                font-size: 1.35rem;
             }
 
             .top-user {
@@ -124,7 +125,6 @@ export class CountDown extends LitElement {
                         <div class="ticket-body">
                             Scoring :
                             <br />
-                            <br />
                             <div class="top-users">
                                 ${this.topUsers.length === 0
                                     ? ''
@@ -134,8 +134,8 @@ export class CountDown extends LitElement {
                                                   <span>${user.name} :</span>
                                                   <br />
                                                   <span
-                                                      >&nbsp;&nbsp;&nbsp;${user.distance}km
-                                                      / ${user.days}</span
+                                                      >${user.days} days /
+                                                      ${user.distance}km</span
                                                   >
                                               </div>
                                           `

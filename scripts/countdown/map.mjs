@@ -62,12 +62,12 @@ export class WorldMap extends LitElement {
             const tmpGDG = getGDG.bind(this)();
             fakeUsers.push({
                 base64: base64JF,
-                finish: false,
+                finish: true,
                 latitude: tmpGDG.latitude,
                 longitude: tmpGDG.longitude,
-                distance: 0,
-                days: 0,
-                name: 'user' + i,
+                distance: Math.round(Math.random() * 10000),
+                days: Math.round(Math.random() * 80),
+                name: 'Very long user name user' + i,
                 uid: 'uid' + i,
             });
         }
@@ -78,10 +78,13 @@ export class WorldMap extends LitElement {
             const fakeUser2 =
                 fakeUsers[Math.round(Math.random() * fakeUsers.length)];
             const gdgTmp1 = getGDG.bind(this)();
+            const gdgTmp2 = getGDG.bind(this)();
+            if (!fakeUser1 || !fakeUser2 || !gdgTmp1 || !gdgTmp2) {
+                return;
+            }
             fakeUser1.latitude = gdgTmp1.latitude;
             fakeUser1.longitude = gdgTmp1.longitude;
             this.updateCallback(fakeUser1);
-            const gdgTmp2 = getGDG.bind(this)();
             fakeUser2.latitude = gdgTmp2.latitude;
             fakeUser2.longitude = gdgTmp2.longitude;
             this.updateCallback(fakeUser2);
@@ -154,7 +157,7 @@ export class WorldMap extends LitElement {
         const d3Map = d3.select(this.mapElt).select('svg');
         const usersMarkers = d3Map
             .selectAll('image.users')
-            .data(users, (user) => console.log(user) || user.id);
+            .data(users, (user) => user.id);
 
         usersMarkers.exit().remove();
 
@@ -198,7 +201,6 @@ export class WorldMap extends LitElement {
     transformUserMap() {}
 
     updateCallback(documentUpdate) {
-        console.log('Map recieve update', documentUpdate);
         this.userMap.set(documentUpdate.uid, {
             id: documentUpdate.uid,
             photoUser: documentUpdate.base64,
@@ -217,8 +219,14 @@ export class WorldMap extends LitElement {
     emitTopUsersEvent(users) {
         const filterUsers = users
             .filter((user) => user.finish)
-            .sort((user1, user2) => user2.days - user1.days)
-            .slice(0, 9);
+            .sort((user1, user2) => {
+                if (+user1.days !== +user2.days) {
+                    return +user1.days - +user2.days;
+                } else {
+                    return +user1.distance - +user2.distance;
+                }
+            })
+            .slice(0, 8);
         if (filterUsers.length > 0) {
             const event = new CustomEvent('topUsersEvent', {
                 detail: { users: filterUsers },
