@@ -34,6 +34,13 @@ export class BoatGame extends GameMixin(LitElement) {
 
     static properties = {};
     static styles = [this.mixinStyles, css`
+        .game {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
         #boatFrame {
             display: flex;
             justify-content: center;
@@ -41,7 +48,6 @@ export class BoatGame extends GameMixin(LitElement) {
             background: #70c4c6;
             position: relative;
             width: 100vw;
-            height: 40vh;
             overflow: hidden;
             margin-top: 20px
         }
@@ -55,9 +61,8 @@ export class BoatGame extends GameMixin(LitElement) {
         #boatActionPanel {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 25vh;
             font-size: larger;
+            padding-top: 10vh;
         }
         
         #long-arrow-left{
@@ -117,7 +122,7 @@ export class BoatGame extends GameMixin(LitElement) {
         }
 
         .cloud.a {
-            top: 170px;
+            top: 1550px;
             animation-duration: 55s;
             z-index: 3;
         }
@@ -130,7 +135,7 @@ export class BoatGame extends GameMixin(LitElement) {
         }
 
         .cloud.c {
-            top: 220px;
+            top: 205px;
             left: -10%;
             animation-duration: 25s;
             z-index: 4;
