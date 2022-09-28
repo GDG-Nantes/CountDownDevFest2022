@@ -26,30 +26,32 @@ export class HorseGame extends GameMixin(LitElement) {
                 align-items: center;
             }
             #horserun {
-                width: 60px;
-                height: 60px;
-                background: url('../../../assets/horse-game/horse-run.png')
+                width: 166px;
+                height: 120px;
+                background: url('../../../assets/horse-game/horse-insane-run.png')
                     no-repeat;
                 display: inline-block;
-                transform: scale(3);
             }
             #horserun.horserun0 {
-                background-position: 0px;
+                background-position: 0px 0px;
             }
             #horserun.horserun1 {
-                background-position: -300px;
+                background-position: -166px 0px;
             }
             #horserun.horserun2 {
-                background-position: -240px;
+                background-position: -332px 0px;
             }
             #horserun.horserun3 {
-                background-position: -180px;
+                background-position: -498px 0px;
             }
             #horserun.horserun4 {
-                background-position: -120px;
+                background-position: -664px 0px;
             }
             #horserun.horserun5 {
-                background-position: -60px;
+                background-position: -830px 0px;
+            }
+            #horserun.horserun6 {
+                background-position: -996px 0px;
             }
             #distanceTraveled {
                 text-align: center;
@@ -72,8 +74,6 @@ export class HorseGame extends GameMixin(LitElement) {
             }
             #horseshoes button.colored {
                 background-color: var(--primary);
-                font-weight: bold;
-                text-decoration: underline;
             }
 
             .icon {
@@ -98,7 +98,7 @@ export class HorseGame extends GameMixin(LitElement) {
 
     renderInstruction() {
         return html`<img src="./assets/horse-game/horse.svg" />
-            <div class="">Tap on each Horseshoe</div>`;
+            <div class="">Tap on the colored horse shoe</div>`;
     }
 
     renderGame() {
