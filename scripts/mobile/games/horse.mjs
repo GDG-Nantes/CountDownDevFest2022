@@ -57,23 +57,26 @@ export class HorseGame extends GameMixin(LitElement) {
                 text-align: center;
             }
             #horseshoes {
-                padding-top: 5vh;
                 display: flex;
-                justify-content: space-evenly;
+                flex-direction: column;
+                align-items: center;
             }
             #horseshoes button {
                 border: 0;
-                width: 30vw;
+                width: 28vw;
                 height: 15vh;
                 -webkit-mask: url(./assets/horse-game/horseshoe.svg) no-repeat
                     50% 50%;
                 mask: url(./assets/horse-game/horseshoe.svg) no-repeat 50% 50%;
                 -webkit-mask-size: contain;
+                transform: rotate(-90deg);
                 mask-size: contain;
                 background-color: var(--primary-dark);
+                margin-left: 0;
             }
             #horseshoes button.colored {
                 background-color: var(--primary);
+                margin-left: 7vh;
             }
 
             .icon {
@@ -112,6 +115,7 @@ export class HorseGame extends GameMixin(LitElement) {
                     class="${!this.nextStepHasToBeRight
                         ? 'colored'
                         : ''}"></button>
+                <br/>
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"
