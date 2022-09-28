@@ -76,7 +76,7 @@ export const GameMixin = (superclass) =>
                     height: 1px;
                     position: absolute;
                     left: 50%;
-                    bottom: -8px;
+                    bottom: -12px;
                     margin-left: -45vw;
                     border-bottom: thin dotted #333;
                 }
