@@ -61,8 +61,9 @@ export class HorseGame extends GameMixin(LitElement) {
             }
             #horseshoes {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
                 align-items: center;
+                justify-content: space-around;
             }
             #horseshoes button {
                 border: 0;
@@ -79,7 +80,6 @@ export class HorseGame extends GameMixin(LitElement) {
             }
             #horseshoes button.colored {
                 background-color: var(--primary);
-                margin-left: 7vh;
             }
 
             .icon {
@@ -119,7 +119,6 @@ export class HorseGame extends GameMixin(LitElement) {
                     class="${!this.nextStepHasToBeRight
                         ? 'colored'
                         : ''}"></button>
-                <br />
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"

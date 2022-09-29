@@ -87,6 +87,7 @@ export const GameMixin = (superclass) =>
             super();
             this.totalDistanceTraveled = 0;
             this.timer = undefined;
+            this.ratioTimeDist = 1;
         }
 
         static properties = {
@@ -101,11 +102,14 @@ export const GameMixin = (superclass) =>
             if (!this.timer) {
                 this.timer = Date.now();
             }
+
+            this.ratioTimeDist = Math.round(this.distanceToRun / (100 * 1000));
         }
 
         incrementDistance(distanceToIncrement) {
             // Update traveled distance
-            this.totalDistanceTraveled += distanceToIncrement;
+            this.totalDistanceTraveled +=
+                distanceToIncrement * this.ratioTimeDist;
             this.requestUpdate();
 
             const width = Math.round(
@@ -118,7 +122,9 @@ export const GameMixin = (superclass) =>
             // If we arrived
             if (this.totalDistanceTraveled > this.distanceToRun) {
                 console.log('Game Finish in : ' + (Date.now() - this.timer));
-                this.finishEvent(Date.now() - this.timer);
+                this.finishEvent(
+                    (Date.now() - this.timer) * this.ratioTimeDist
+                );
             }
         }
 

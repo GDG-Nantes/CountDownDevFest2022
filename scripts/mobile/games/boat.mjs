@@ -4,7 +4,7 @@ import { GameMixin } from './game-mixin.mjs';
 export class BoatGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 500;
+        this.distanceTraveledByStep = 4500;
 
         let delayedActionId;
         let touchstartX = 0;
@@ -37,7 +37,7 @@ export class BoatGame extends GameMixin(LitElement) {
         this.mixinStyles,
         css`
             :host {
-                --size-balloon: 20px;
+                --size-balloon: 29px;
             }
             .game {
                 position: relative;

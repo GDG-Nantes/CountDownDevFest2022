@@ -135,7 +135,8 @@ export class CountDown extends LitElement {
                                                   <br />
                                                   <span
                                                       >${user.days} days /
-                                                      ${user.distance}km</span
+                                                      ${user.distance /
+                                                      1000}km</span
                                                   >
                                               </div>
                                           `

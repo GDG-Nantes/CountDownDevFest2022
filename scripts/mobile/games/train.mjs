@@ -4,7 +4,7 @@ import { GameMixin } from './game-mixin.mjs';
 export class TrainGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 6000;
+        this.distanceTraveledByStep = 4500;
     }
 
     static properties = {};
@@ -15,9 +15,10 @@ export class TrainGame extends GameMixin(LitElement) {
                 --size-balloon: 29px;
             }
 
-            .progress img,
             .instructions img {
-                transform: rotateY('180deg');
+                transform: rotateY(180deg);
+                border-left: thin dotted #333;
+                border-right: 0px;
             }
             ol,
             ul {

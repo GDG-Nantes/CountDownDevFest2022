@@ -4,7 +4,8 @@ import { GameMixin } from './game-mixin.mjs';
 export class SubmarineGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 100;
+        this.distanceTraveledByStep = 150;
+        this.finish = false;
     }
 
     static properties = {};
@@ -70,6 +71,7 @@ export class SubmarineGame extends GameMixin(LitElement) {
 
     touchMove(event) {
         event.preventDefault();
+        if (this.finish) return;
         if (!this.propellerElt) {
             this.propellerElt = this.renderRoot?.querySelector('.propeller');
             const rect = this.propellerElt.getBoundingClientRect();
@@ -116,6 +118,11 @@ export class SubmarineGame extends GameMixin(LitElement) {
                 this.runOneStep();
             }
         }
+    }
+
+    finishEvent(time) {
+        super.finishEvent(time);
+        this.finish = true;
     }
 
     touchEnd(event) {

@@ -257,7 +257,9 @@ export class Mobile extends LitElement {
                         <div class="gdg-target">
                             Congrats! You finish your worldtour with
                             ${this.endGame
-                                ? `${this.endGame.distance} km and in ${this.endGame.days} days`
+                                ? `${this.endGame.distance / 1000} km and in ${
+                                      this.endGame.days
+                                  } days`
                                 : ''}
                         </div>
                         <div class="buttons-area">
@@ -365,7 +367,7 @@ export class Mobile extends LitElement {
     }
 
     finish(event) {
-        const days = Math.round((this.timeGame / 1000) * 0.5);
+        const days = Math.round(this.timeGame / 1000 / 40);
         this.endGame = {
             distance: this.globalDistance,
             days,
