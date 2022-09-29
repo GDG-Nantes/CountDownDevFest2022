@@ -86,6 +86,7 @@ export class BaloonGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
+            './assets/baloon-game/air-baloon.svg',
             this.renderInstruction(),
             this.renderGame()
         );

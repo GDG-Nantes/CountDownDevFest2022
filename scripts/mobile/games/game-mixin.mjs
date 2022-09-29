@@ -122,7 +122,7 @@ export const GameMixin = (superclass) =>
             }
         }
 
-        renderGameSkeleton(header, instruction, game) {
+        renderGameSkeleton(header, srcImg, instruction, game) {
             return html`
                 <header>
                     <p @click="${() => this.quitEvent()}">←${header}</p>
@@ -133,10 +133,11 @@ export const GameMixin = (superclass) =>
                 </header>
                 <section class="instructions">${instruction}</section>
                 <section class="progress">
-                    <div class="balloon">
+                    <img src="${srcImg}" />
+                    <!--<div class="balloon">
                         <div class="envelope"></div>
                         <div class="basket"></div>
-                    </div>
+                    </div>-->
                 </section>
                 <div id="distanceTraveled">
                     distance traveled: ${this.totalDistanceTraveled}m /

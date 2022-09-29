@@ -213,6 +213,14 @@ export const balloonCss = css`
         );
     }
 
+    .progress img {
+        display: block;
+        position: absolute;
+        top: var(--top-balloon);
+        left: var(--progress-balloon);
+        height: var(--size-balloon);
+    }
+
     .balloon {
         display: block;
         position: absolute;

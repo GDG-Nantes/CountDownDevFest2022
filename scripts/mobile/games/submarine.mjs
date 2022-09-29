@@ -11,6 +11,10 @@ export class SubmarineGame extends GameMixin(LitElement) {
     static styles = [
         this.mixinStyles,
         css`
+            :host {
+                --size-balloon: 40px;
+                --top-balloon: -8px;
+            }
             .propeller-wrapper {
                 display: flex;
                 align-items: center;
@@ -37,6 +41,7 @@ export class SubmarineGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
+            './assets/submarine-game/submarine.svg',
             this.renderInstruction(),
             this.renderGame()
         );

@@ -11,6 +11,14 @@ export class TrainGame extends GameMixin(LitElement) {
     static styles = [
         this.mixinStyles,
         css`
+            :host {
+                --size-balloon: 29px;
+            }
+
+            .progress img,
+            .instructions img {
+                transform: rotateY('180deg');
+            }
             ol,
             ul {
                 list-style: none;
@@ -147,6 +155,7 @@ export class TrainGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
+            './assets/train-game/train.svg',
             this.renderInstruction(),
             this.renderGame()
         );

@@ -13,6 +13,9 @@ export class HorseGame extends GameMixin(LitElement) {
     static styles = [
         this.mixinStyles,
         css`
+            :host {
+                --size-balloon: 29px;
+            }
             .game {
                 position: relative;
                 display: grid;
@@ -90,6 +93,7 @@ export class HorseGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
+            './assets/horse-game/horse.svg',
             this.renderInstruction(),
             this.renderGame()
         );
@@ -115,7 +119,7 @@ export class HorseGame extends GameMixin(LitElement) {
                     class="${!this.nextStepHasToBeRight
                         ? 'colored'
                         : ''}"></button>
-                <br/>
+                <br />
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"
