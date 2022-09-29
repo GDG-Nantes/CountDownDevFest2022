@@ -46,6 +46,7 @@ export class WorldMapMobile extends LitElement {
         this.sizePoint = 0.2;
         this.exceedMiddleEarth = false;
         this.destination = null;
+        this.currentGDG = undefined;
         this.firstPassedToPositiveLongitude = false;
         this.currentMarkers = undefined;
         this.flagGDGNantesPassed = false;
@@ -85,6 +86,7 @@ export class WorldMapMobile extends LitElement {
     initValuesForGame() {
         this.exceedMiddleEarth = false;
         this.destination = null;
+        this.currentGDG = null;
         this.firstPassedToPositiveLongitude = false;
         this.currentMarkers = undefined;
         this.flagGDGNantesPassed = false;
@@ -224,6 +226,7 @@ export class WorldMapMobile extends LitElement {
     }
 
     centerToPoint(gdg) {
+        this.currentGDG = gdg;
         this.emitGDGEvent(gdg);
 
         // Update position on firebase
@@ -373,7 +376,9 @@ export class WorldMapMobile extends LitElement {
         event.stopPropagation();
         const gdgToTarget =
             this.dictionnaryGDGChapters[event.currentTarget.id.substring(1)];
-        this.clickOnTargetGDG(gdgToTarget, event.currentTarget.__data__);
+        if (this.currentGDG.id !== gdgToTarget.id) {
+            this.clickOnTargetGDG(gdgToTarget, event.currentTarget.__data__);
+        }
     }
 
     clickOnTargetGDG(gdgToTarget, data) {
