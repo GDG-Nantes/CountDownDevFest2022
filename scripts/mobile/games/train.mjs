@@ -190,6 +190,7 @@ export class TrainGame extends GameMixin(LitElement) {
     }
 
     touchMove(event) {
+        event.preventDefault();
         if (!this.woodenElt) {
             this.woodenElt = this.renderRoot?.querySelector('.wooden img');
         }
