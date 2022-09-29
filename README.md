@@ -14,6 +14,7 @@ CountDown project for DevFest Nantes 2022
 Graphicals ressources used for the project that are under CC license :
 
 -   submarine : https://thenounproject.com/icon/submarine-2393606/
+-   submarine propeller : https://thenounproject.com/icon/propeller-4212322/
 -   boat : https://thenounproject.com/icon/boat-24055/
 -   horses : https://thenounproject.com/icon/horse-2717676/
 -   train : https://thenounproject.com/icon/train-9595/
