@@ -15,6 +15,10 @@ export class TrainGame extends GameMixin(LitElement) {
                 --size-balloon: 29px;
             }
 
+            .progress img {
+                transform: rotateY(180deg);
+            }
+
             .instructions img {
                 transform: rotateY(180deg);
                 border-left: thin dotted #333;
