@@ -128,22 +128,17 @@ export const GameMixin = (superclass) =>
             }
         }
 
-        renderGameSkeleton(header, srcImg, instruction, game) {
+        renderGameSkeleton(header, instruction, game) {
             return html`
                 <header>
                     <p @click="${() => this.quitEvent()}">←${header}</p>
                     <img
                         src="${this.service.getUser().photoURL}"
                         referrerpolicy="no-referrer" />
-                    <!--<button @click="${this.quitEvent}">Quit</button>-->
                 </header>
                 <section class="instructions">${instruction}</section>
                 <section class="progress">
-                    <img src="${srcImg}" />
-                    <!--<div class="balloon">
-                        <div class="envelope"></div>
-                        <div class="basket"></div>
-                    </div>-->
+                    <i class="progress-icon"></i>
                 </section>
                 <div id="distanceTraveled">
                     distance traveled: ${this.totalDistanceTraveled}m /

@@ -15,6 +15,7 @@ export class HorseGame extends GameMixin(LitElement) {
         css`
             :host {
                 --size-balloon: 29px;
+                --icon-src: url('./assets/horse-game/horse.svg');
             }
             .game {
                 position: relative;
@@ -93,7 +94,6 @@ export class HorseGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
-            './assets/horse-game/horse.svg',
             this.renderInstruction(),
             this.renderGame()
         );

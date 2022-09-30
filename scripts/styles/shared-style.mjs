@@ -213,6 +213,20 @@ export const balloonCss = css`
         );
     }
 
+    .progress i {
+        display: block;
+        position: absolute;
+        top: var(--top-balloon);
+        left: var(--progress-balloon);
+        height: var(--size-balloon);
+        width: var(--size-balloon);
+        -webkit-mask: var(--icon-src) no-repeat 50% 50%;
+        mask: var(--icon-src) no-repeat 50% 50%;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        background-color: white;
+    }
+
     .progress img {
         display: block;
         position: absolute;

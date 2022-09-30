@@ -38,6 +38,7 @@ export class BoatGame extends GameMixin(LitElement) {
         css`
             :host {
                 --size-balloon: 29px;
+                --icon-src: url('./assets/boat-game/boat.svg');
             }
             .game {
                 position: relative;
@@ -224,7 +225,6 @@ export class BoatGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
-            './assets/boat-game/boat.svg',
             this.renderInstruction(),
             this.renderGame()
         );

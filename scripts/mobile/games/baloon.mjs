@@ -33,6 +33,10 @@ export class BaloonGame extends GameMixin(LitElement) {
     static styles = [
         this.mixinStyles,
         css`
+            :host {
+                --icon-src: url('./assets/baloon-game/air-baloon.svg');
+            }
+
             .main-balloon {
                 position: relative;
                 display: grid;
@@ -87,7 +91,6 @@ export class BaloonGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
-            './assets/baloon-game/air-baloon.svg',
             this.renderInstruction(),
             this.renderGame()
         );

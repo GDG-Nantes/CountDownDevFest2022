@@ -13,6 +13,7 @@ export class TrainGame extends GameMixin(LitElement) {
         css`
             :host {
                 --size-balloon: 29px;
+                --icon-src: url('./assets/train-game/train.svg');
             }
 
             .progress img {
@@ -160,7 +161,6 @@ export class TrainGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
-            './assets/train-game/train.svg',
             this.renderInstruction(),
             this.renderGame()
         );

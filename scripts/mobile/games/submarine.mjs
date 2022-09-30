@@ -15,6 +15,7 @@ export class SubmarineGame extends GameMixin(LitElement) {
             :host {
                 --size-balloon: 40px;
                 --top-balloon: -8px;
+                --icon-src: url('./assets/submarine-game/submarine.svg');
             }
 
             .propeller-wrapper {
@@ -41,19 +42,48 @@ export class SubmarineGame extends GameMixin(LitElement) {
 
             .propeller-border {
                 position: relative;
-                width: min(70vw, 70vh);
+                /*width: min(70vw, 70vh);
                 height: min(70vw, 70vh);
-                border: min(5vw, 5vh);
+                border-radius: min(70vw, 70vh);*/
+                /*border: min(5vw, 5vh);
                 border-color: var(--secondary);
-                border-radius: min(70vw, 70vh);
                 border-style: solid;
                 background: radial-gradient(
                     circle,
                     var(--secondary) 0%,
                     var(--secondary) 51%,
                     var(--primary-dark) 100%
+                );*/
+                width: min(75vw, 75vh);
+                height: min(75vw, 75vh);
+                border-radius: min(75vw, 75vh);
+                background: radial-gradient(
+                    circle,
+                    var(--secondary) 0,
+                    var(--primary-dark) 63%,
+                    var(--secondary) 64%,
+                    var(--primary-dark) 68%,
+                    var(--secondary) 100%
                 );
             }
+            /*.propeller-border::after {
+                position: absolute;
+                content: '';
+                top: 0;
+                left: 0;
+                width: min(75vw, 75vh);
+                height: min(75vw, 75vh);
+                border-radius: min(75vw, 75vh);
+                background: radial-gradient(
+                    circle,
+                    var(--secondary) 0%,
+                    var(--secondary) min(35vh, 35vw),
+                    var(--primary-dark) min(70vh, 70vw),
+                    var(--secondary) min(70vh, 70vw),
+                    var(--primary-dark) min(72vh, 72vw),
+                    var(--secondary) min(75vh, 75vw)
+                );
+            }*/
 
             .propeller {
                 width: min(60vw, 60vh);
@@ -206,7 +236,6 @@ export class SubmarineGame extends GameMixin(LitElement) {
     render() {
         return this.renderGameSkeleton(
             this.renderHeader(),
-            './assets/submarine-game/submarine.svg',
             this.renderInstruction(),
             this.renderGame()
         );
