@@ -22,6 +22,7 @@ export class Mobile extends LitElement {
         this.resetGame = false;
         this.timeGame = 0;
         this.globalDistance = 0;
+        this.instructionRead = false;
     }
 
     static styles = [
@@ -85,6 +86,20 @@ export class Mobile extends LitElement {
                 --left-card: 50px;
                 --witdh-card: calc(100vw - 100px);
                 --height-card: 400px;
+            }
+
+            .game-instructions-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: var(--secondary);
+            }
+
+            .card-ticket.game-instructions {
+                --top-card: 10vh;
+                --height-card: 80vh;
             }
 
             .card-ticket .ticket::after,
@@ -167,35 +182,71 @@ export class Mobile extends LitElement {
         service: { type: Object },
     };
 
-    render() {
-        return html`
-            <header>
-                <p>${this.gdg ? this.gdg.title : ''}</p>
-                <img
-                    src="${this.service.getUser().photoURL}"
-                    referrerpolicy="no-referrer" />
-            </header>
-            <section class="instructions">Select your next destination</section>
-            <section class="progress">
-                <div class="balloon">
-                    <div class="envelope"></div>
-                    <div class="basket"></div>
+    renderInstructions() {
+        return html`<div class="game-instructions-wrapper">
+            <div class="card-ticket game-instructions">
+                <div class="ticket">
+                    <div class="ticket-wrapper">
+                        <div class="ticket-body">
+                            <div class="gdg-target">
+                                You will have to navigate accross the different
+                                GDGs of the world 🧭.
+                                <br />
+                                <br />
+                                To navigate, click on GDG and choose the game to
+                                play to validate your travel.
+                                <br />
+                                <br />
+                                Be the faster to came back to GDG Nantes ⏱ !
+                            </div>
+                            <div class="buttons-area">
+                                <button
+                                    @click="${() => this.readInstructions()}">
+                                    Play
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
-            <world-map-mobile
-                zoom="10"
-                .continents=${this.continents}
-                .service=${this.service}
-                .reset=${this.resetGame}
-                @click=${(event) => this.clikOutside(event)}
-                @finishEvent="${(event) => this.finish(event)}"
-                @gdgSelectEvent="${(event) => this.selectGDG(event)}"
-                @debugFinishGameEvent="${(event) => this.finishGame(event)}"
-                @gdgHoverEvent="${(event) =>
-                    this.hoverGDG(event)}"></world-map-mobile>
-            ${this.renderDestination()} ${this.renderEndGame()}
-            ${this.renderGame()}
-        `;
+            </div>
+        </div>`;
+    }
+
+    render() {
+        if (!this.instructionRead) {
+            return this.renderInstructions();
+        } else {
+            return html`
+                <header>
+                    <p>${this.gdg ? this.gdg.title : ''}</p>
+                    <img
+                        src="${this.service.getUser().photoURL}"
+                        referrerpolicy="no-referrer" />
+                </header>
+                <section class="instructions">
+                    Select your next destination
+                </section>
+                <section class="progress">
+                    <div class="balloon">
+                        <div class="envelope"></div>
+                        <div class="basket"></div>
+                    </div>
+                </section>
+                <world-map-mobile
+                    zoom="10"
+                    .continents=${this.continents}
+                    .service=${this.service}
+                    .reset=${this.resetGame}
+                    @click=${(event) => this.clikOutside(event)}
+                    @finishEvent="${(event) => this.finish(event)}"
+                    @gdgSelectEvent="${(event) => this.selectGDG(event)}"
+                    @debugFinishGameEvent="${(event) => this.finishGame(event)}"
+                    @gdgHoverEvent="${(event) =>
+                        this.hoverGDG(event)}"></world-map-mobile>
+                ${this.renderDestination()} ${this.renderEndGame()}
+                ${this.renderGame()}
+            `;
+        }
     }
 
     renderDestination() {
@@ -338,6 +389,11 @@ export class Mobile extends LitElement {
         this.requestUpdate();
     }
 
+    readInstructions() {
+        this.instructionRead = true;
+        this.requestUpdate();
+    }
+
     selectGame(game) {
         this.game = game;
         this.requestUpdate();
@@ -354,6 +410,9 @@ export class Mobile extends LitElement {
         console.log('clickOutside', this.destination);
         if (this.destination) {
             this.destination = undefined;
+            const mapElt =
+                this.renderRoot?.querySelector('world-map-mobile') ?? null;
+            mapElt.destination = undefined;
             this.requestUpdate();
         }
     }
