@@ -16,11 +16,43 @@ export class SubmarineGame extends GameMixin(LitElement) {
                 --size-balloon: 40px;
                 --top-balloon: -8px;
             }
+
             .propeller-wrapper {
+                position: relative;
+                background-image: linear-gradient(0deg, #182848, #2980b9);
+            }
+
+            .propeller-wrapper,
+            .propeller-border {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 height: 100%;
+            }
+
+            .ocean {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+            }
+
+            .propeller-border {
+                position: relative;
+                width: min(70vw, 70vh);
+                height: min(70vw, 70vh);
+                border: min(5vw, 5vh);
+                border-color: var(--secondary);
+                border-radius: min(70vw, 70vh);
+                border-style: solid;
+                background: radial-gradient(
+                    circle,
+                    var(--secondary) 0%,
+                    var(--secondary) 51%,
+                    var(--primary-dark) 100%
+                );
             }
 
             .propeller {
@@ -35,6 +67,138 @@ export class SubmarineGame extends GameMixin(LitElement) {
                 -webkit-mask-size: cover;
                 mask-size: cover;
                 transform: rotate(var(--rotation, 0deg));
+            }
+
+            .bubble {
+                width: 30px;
+                height: 30px;
+                border-radius: 100%;
+                position: absolute;
+                background-color: white;
+                bottom: -30px;
+                opacity: 0.2;
+                animation: bubble 15s ease-in-out infinite,
+                    sideWays 4s ease-in-out infinite alternate;
+            }
+
+            @keyframes bubble {
+                0% {
+                    transform: translateY(0%);
+                    opacity: 0.06;
+                }
+                100% {
+                    transform: translateY(-120vh);
+                }
+            }
+
+            @keyframes sideWays {
+                0% {
+                    margin-left: 0px;
+                }
+                100% {
+                    margin-left: 200px;
+                }
+            }
+
+            .bubble--1 {
+                left: 10%;
+                animation-delay: 0.5s;
+                animation-duration: 16s;
+                opacity: 0.2;
+            }
+
+            .bubble--2 {
+                width: 15px;
+                height: 15px;
+                left: 40%;
+                animation-delay: 1s;
+                animation-duration: 10s;
+                opacity: 0.1;
+            }
+
+            .bubble--3 {
+                width: 10px;
+                height: 10px;
+                left: 30%;
+                animation-delay: 5s;
+                animation-duration: 20s;
+                opacity: 0.3;
+            }
+
+            .bubble--4 {
+                width: 25px;
+                height: 25px;
+                left: 40%;
+                animation-delay: 8s;
+                animation-duration: 17s;
+                opacity: 0.2;
+            }
+
+            .bubble--5 {
+                width: 30px;
+                height: 30px;
+                left: 60%;
+                animation-delay: 10s;
+                animation-duration: 15s;
+                opacity: 0.1;
+            }
+
+            .bubble--6 {
+                width: 10px;
+                height: 10px;
+                left: 80%;
+                animation-delay: 3s;
+                animation-duration: 30s;
+                opacity: 0.4;
+            }
+
+            .bubble--7 {
+                width: 15px;
+                height: 15px;
+                left: 90%;
+                animation-delay: -7s;
+                animation-duration: 25s;
+                opacity: 0.3;
+            }
+
+            .bubble--9 {
+                width: 20px;
+                height: 20px;
+                left: 50%;
+                bottom: 30px;
+                animation-delay: -5s;
+                animation-duration: 19s;
+                opacity: 0.2;
+            }
+
+            .bubble--10 {
+                width: 40px;
+                height: 40px;
+                left: 30%;
+                bottom: 30px;
+                animation-delay: -21s;
+                animation-duration: 16s;
+                opacity: 0.3;
+            }
+
+            .bubble--11 {
+                width: 30px;
+                height: 30px;
+                left: 60%;
+                bottom: 30px;
+                animation-delay: -13.75s;
+                animation-duration: 20s;
+                opacity: 0.3;
+            }
+
+            .bubble--11 {
+                width: 25px;
+                height: 25px;
+                left: 90%;
+                bottom: 30px;
+                animation-delay: -10.5s;
+                animation-duration: 19s;
+                opacity: 0.3;
             }
         `,
     ];
@@ -61,10 +225,26 @@ export class SubmarineGame extends GameMixin(LitElement) {
 
     renderGame() {
         return html` <div class="propeller-wrapper">
-            <i
-                class="propeller"
-                @touchmove="${(event) => this.touchMove(event)}"
-                @touchend="${(event) => this.touchEnd(event)}"></i>
+            <div class="ocean">
+                <div class="bubble bubble--1"></div>
+                <div class="bubble bubble--2"></div>
+                <div class="bubble bubble--3"></div>
+                <div class="bubble bubble--4"></div>
+                <div class="bubble bubble--5"></div>
+                <div class="bubble bubble--6"></div>
+                <div class="bubble bubble--7"></div>
+                <div class="bubble bubble--8"></div>
+                <div class="bubble bubble--9"></div>
+                <div class="bubble bubble--10"></div>
+                <div class="bubble bubble--11"></div>
+                <div class="bubble bubble--12"></div>
+            </div>
+            <div class="propeller-border">
+                <i
+                    class="propeller"
+                    @touchmove="${(event) => this.touchMove(event)}"
+                    @touchend="${(event) => this.touchEnd(event)}"></i>
+            </div>
         </div>`;
     }
 
