@@ -40,6 +40,7 @@ export class BaloonGame extends GameMixin(LitElement) {
                 grid-template-rows: 1fr 100px;
                 width: 100%;
                 height: 100%;
+                overflow: hidden;
                 --size-balloon: 15rem;
                 --progress-balloon: calc(100vw - 50%);
             }
