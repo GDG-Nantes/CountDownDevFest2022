@@ -82,10 +82,10 @@ export class Mobile extends LitElement {
             }
 
             .card-ticket {
-                --bottom-card: 50px;
-                --left-card: 50px;
-                --witdh-card: calc(100vw - 100px);
-                --height-card: 400px;
+                --bottom-card: 10vh;
+                --left-card: 10vw;
+                --witdh-card: calc(100vw - 20vw);
+                --height-card: 55vh;
             }
 
             .game-instructions-wrapper {

@@ -66,7 +66,7 @@ export class TrainGame extends GameMixin(LitElement) {
 
             .floor {
                 background-color: #362f2d;
-                height: 150px;
+                height: 20vh;
                 width: 100%;
                 position: absolute;
                 bottom: 0;
@@ -91,8 +91,8 @@ export class TrainGame extends GameMixin(LitElement) {
             .fireplace {
                 background: url('https://res.cloudinary.com/dnkyeoud9/image/upload/v1450743321/fireplace_khwwvj.png')
                     no-repeat;
-                background-size: 280px 200px;
-                height: 200px;
+                background-size: 80vw calc((200 / 280) * 80vw);
+                height: calc((200 / 280) * 80vw);
                 background-position: center top;
                 margin: 0 auto;
                 position: relative;
@@ -104,7 +104,7 @@ export class TrainGame extends GameMixin(LitElement) {
                 position: absolute;
                 width: 100%;
                 margin: 0 auto;
-                bottom: 50px;
+                bottom: 10vh;
                 text-align: center;
             }
 
