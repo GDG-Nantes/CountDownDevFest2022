@@ -8,9 +8,8 @@ export const GameMixin = (superclass) =>
             css`
                 :host {
                     position: relative;
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    grid-template-rows: 50px 150px 20px 20px 1fr;
+                    display: flex;
+                    flex-direction: column;
                     font-family: 'RumbleBrave';
                     //grid-template-rows: 10vh 5vh 45vh 40vh;
                     --header-height: 50px;
@@ -48,14 +47,44 @@ export const GameMixin = (superclass) =>
                     align-items: center;
                 }
 
-                .instructions {
-                    display: grid;
-                    grid-template-columns: var(--icon-width) 1fr;
-                    grid-template-rows: 1fr;
-                    align-items: center;
-                    text-align: center;
-                    font-size: 2rem;
+                .game { 
+                    flex-grow: 1;
+                    background-image: linear-gradient(0deg, rgba(195,125,34,0.7) 0%, rgba(253,187,45,0.5) 100%), 
+                    url('./assets/images/asfalt-dark.png');
                 }
+
+                .instructions {
+                    position: absolute;
+                    top: 70px;
+                    display: flex;
+                    justify-content: center;
+                    width: 100vw;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+
+                    .floating-instructions {
+                        border: 30px solid;
+                        box-sizing: border-box;
+                        border-image-source: url('./assets/images/frame-2.svg');
+                        border-image-slice: 23;
+                        background-clip: content-box;
+                        background-color: rgb(33, 75, 96);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: white;
+                        z-index: 50;
+                        padding: 30px:
+                        flex-grow: 1;
+                        width: 100%;
+                        font-family: "Pokemon", monospace;
+                    }
+
+                        .floating-instructions  {
+
+                        }
+
 
                 .instructions img {
                     width: var(--icon-width);
@@ -136,15 +165,18 @@ export const GameMixin = (superclass) =>
                         src="${this.service.getUser().photoURL}"
                         referrerpolicy="no-referrer" />
                 </header>
-                <section class="instructions">${instruction}</section>
+                <section class="instructions">
+                    <section class="floating-instructions">
+                        ${instruction}
+                    </section>
+                </section>
+                <section class="game">
+                    ${game}
+                </section>
                 <section class="progress">
+                    <section class="progress-bar"></section>
                     <i class="progress-icon"></i>
                 </section>
-                <div id="distanceTraveled">
-                    distance traveled: ${this.totalDistanceTraveled}m /
-                    ${this.distanceToRun}m 🏁
-                </div>
-                <section class="game">${game}</section>
             `;
         }
 

@@ -55,6 +55,11 @@ Web Fonts declaration
   font-family: "RumbleBrave";
   src: url("../assets/fonts/Rumble-Brave.otf") format("truetype");
 }
+@font-face {
+  font-family: "Pokemon";
+  src: url("../assets/fonts/Pokemon Classic.ttf") format("truetype");
+}
+
 html,
 body {
   font-family: "Roboto";

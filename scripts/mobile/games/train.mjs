@@ -86,7 +86,7 @@ export class TrainGame extends GameMixin(LitElement) {
             /*Content*/
             .content {
                 position: absolute;
-                top: 0px;
+                bottom: 20vh;
                 margin: 0 auto;
                 width: 100%;
                 overflow: hidden;
@@ -171,8 +171,7 @@ export class TrainGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`<img src="./assets/train-game/train.svg" />
-            <div class="">Throw wood in the fire</div>`;
+        return html`<div class="">Throw wood in the fire</div>`;
     }
 
     renderGame() {
