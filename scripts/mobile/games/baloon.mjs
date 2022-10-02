@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { GameMixin } from './game-mixin.mjs';
+import { cloudCss } from '../../styles/shared-style.mjs';
 
 const State = {
     IDLE: 1,
@@ -31,6 +32,7 @@ export class BaloonGame extends GameMixin(LitElement) {
 
     static properties = {};
     static styles = [
+        cloudCss,
         this.mixinStyles,
         css`
             :host {
@@ -51,12 +53,14 @@ export class BaloonGame extends GameMixin(LitElement) {
 
             .balloon-wrapper {
                 position: relative;
+                background: #70c4c6;
             }
-
+            
             .main-balloon .balloon {
                 top: initial;
                 --bottom-balloon: -70px;
                 bottom: var(--bottom-balloon);
+                background: #70c4c6;
             }
 
             .line-limit::before {
@@ -124,6 +128,11 @@ export class BaloonGame extends GameMixin(LitElement) {
         return html`
             <div class="main-balloon">
                 <div class="balloon-wrapper">
+                    <div id="cloud" class="cloud animation-paused"></div>
+                    <div id="cloud-a" class="cloud a animation-paused"></div>
+                    <div id="cloud-b" class="cloud b animation-paused"></div>
+                    <div id="cloud-c" class="cloud c animation-paused"></div>
+                    <div id="wind" class="wind animation-paused"></div>
                     <div class="balloon">
                         <div class="envelope"></div>
                         <div class="basket"></div>
@@ -230,6 +239,7 @@ export class BaloonGame extends GameMixin(LitElement) {
         }
         this.displayBalloon(max);
         if (this.iterationOverThreshold > this.iterationThreadshold) {
+            this.animateWindAndCloud();
             this.runOneStep(max);
             console.log('Exceed', max, this.iterationOverThreshold);
         }

@@ -320,3 +320,134 @@ export const balloonCss = css`
         transform: translateX(-50%) rotateX(-20deg);
     }
 `;
+
+export const cloudCss = css`
+    .cloud {
+        width: 50px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: #fff;
+        position: absolute;
+        top: 40vh;
+        left: -20%;
+        animation-name: cloud;
+        animation-duration: 70s;
+        animation-iteration-count: infinite;
+        animation-play-state: paused;
+    }
+
+    .cloud::before {
+        content: '';
+        width: 35px;
+        height: 30px;
+        background-color: #fff;
+        margin-left: -20px;
+        margin-top: 10px;
+        display: block;
+        border-radius: 50%;
+    }
+
+    .cloud::after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        position: absolute;
+        right: -10px;
+        top: 17px;
+        border-radius: 50%;
+    }
+
+    .cloud.a {
+        top: 50vh;
+        animation-duration: 55s;
+        z-index: 3;
+    }
+
+    .cloud.b {
+        top: 25vh;
+        left: -15%;
+        animation-duration: 38s;
+        z-index: 8;
+    }
+
+    .cloud.c {
+        top: 30vh;
+        left: -10%;
+        animation-duration: 25s;
+        z-index: 4;
+    }
+
+    .wind {
+        width: 150px;
+        background-color: #eee;
+        height: 2px;
+        position: absolute;
+        top: 35vh;
+        animation-name: wind;
+        animation-duration: 5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        animation-play-state: paused;
+        z-index: 1;
+    }
+
+    .wind::before {
+        content: '';
+        position: absolute;
+        left: 200px;
+        width: 100px;
+        height: 1px;
+        background-color: #eee;
+        top: 100px;
+    }
+
+    .wind::after {
+        content: '';
+        position: absolute;
+        left: 400px;
+        width: 180px;
+        height: 1px;
+        background-color: #eee;
+        top: 30px;
+    }
+
+    @keyframes cloud {
+        0% {
+            transform: translateX(140vw);
+        }
+        100% {
+            transform: translateX(-30vw);
+        }
+    }
+
+    @keyframes wind {
+        0% {
+            left: 100vw;
+            opacity: 0;
+        }
+        15% {
+            opacity: 1;
+        }
+        70% {
+            left: -100vw;
+            opacity: 1;
+        }
+        80% {
+            left: -100vw;
+            opacity: 0;
+        }
+        100% {
+            left: 120vw;
+            opacity: 0;
+        }
+    }
+
+    .animation-paused {
+        animation-play-state: paused;
+    }
+
+    .animation-running {
+        animation-play-state: running;
+    }
+`;

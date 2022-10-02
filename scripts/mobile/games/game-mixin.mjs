@@ -117,6 +117,7 @@ export const GameMixin = (superclass) =>
             this.totalDistanceTraveled = 0;
             this.timer = undefined;
             this.ratioTimeDist = 1;
+            this.delayedWindAndCloudActionId;
         }
 
         static properties = {
@@ -195,5 +196,50 @@ export const GameMixin = (superclass) =>
                 composed: true,
             });
             this.dispatchEvent(event);
+        }
+
+        animateWindAndCloud() {
+            if (this.delayedWindAndCloudActionId) {
+                clearTimeout(this.delayedWindAndCloudActionId);
+            }
+
+            this.startWindAndCloudAnimation();
+            this.delayedWindAndCloudActionId = setTimeout(() => this.stopWindAndCloudAnimation(), 1000);
+        }
+
+        startWindAndCloudAnimation() {
+            this.renderRoot
+                ?.querySelector('#cloud')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#cloud-a')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#cloud-b')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#cloud-c')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#wind')
+                .classList.replace('animation-paused', 'animation-running');
+        }
+
+        stopWindAndCloudAnimation() {
+            this.renderRoot
+                ?.querySelector('#cloud')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#cloud-a')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#cloud-b')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#cloud-c')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#wind')
+                .classList.replace('animation-running', 'animation-paused');
         }
     };
