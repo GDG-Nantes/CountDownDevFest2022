@@ -246,7 +246,7 @@ export class SubmarineGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`<img src="./assets/submarine-game/submarine.svg" />
+        return html`
             <div class="">
                 Turn the propeller (don't throw it, keep in contact) 👆
             </div>`;

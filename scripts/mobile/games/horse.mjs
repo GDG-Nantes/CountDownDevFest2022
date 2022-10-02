@@ -27,7 +27,7 @@ export class HorseGame extends GameMixin(LitElement) {
             #horserunFrame {
                 display: flex;
                 justify-content: center;
-                align-items: center;
+                align-items: flex-end;
             }
             #horserun {
                 width: 166px;
@@ -67,21 +67,25 @@ export class HorseGame extends GameMixin(LitElement) {
                 justify-content: space-around;
             }
             #horseshoes button {
+                position: relative;
                 border: 0;
                 width: 28vw;
-                height: 15vh;
-                -webkit-mask: url(./assets/horse-game/horseshoe.svg) no-repeat
-                    50% 50%;
-                mask: url(./assets/horse-game/horseshoe.svg) no-repeat 50% 50%;
-                -webkit-mask-size: contain;
+                height: 28vw;
+                border-radius: 100%;
                 transform: rotate(-90deg);
                 mask-size: contain;
-                background-color: var(--primary-dark);
+                background-color: transparent;
                 margin-left: 0;
+                padding: 20px;
+                box-sizing: border-box;
             }
             #horseshoes button.colored {
                 background-color: var(--primary);
             }
+
+                #horseshoes button img {
+                    height: 100%;
+                }
 
             .icon {
                 width: var(--icon-width);
@@ -104,7 +108,7 @@ export class HorseGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`<img src="./assets/horse-game/horse.svg" />
+        return html`
             <div class="">Tap on the colored horse shoe</div>`;
     }
 
@@ -118,13 +122,17 @@ export class HorseGame extends GameMixin(LitElement) {
                     @click="${() => this.leftHorseShoeClick()}"
                     class="${!this.nextStepHasToBeRight
                         ? 'colored'
-                        : ''}"></button>
+                        : ''}">
+                    <img src="./assets/horse-game/horseshoe.svg" />        
+                </button>
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"
                     class="${this.nextStepHasToBeRight
                         ? 'colored'
-                        : ''}"></button>
+                        : ''}">
+                    <img src="./assets/horse-game/horseshoe.svg" />        
+                </button>
             </div>`;
     }
 

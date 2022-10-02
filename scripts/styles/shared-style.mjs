@@ -204,13 +204,18 @@ export const balloonCss = css`
 
     .progress {
         position: relative;
-        background: linear-gradient(
-            90deg,
-            var(--primary) 0px,
-            var(--primary) var(--progress-balloon),
-            var(--secondary) var(--progress-balloon),
-            var(--secondary) 100%
-        );
+        background: var(--primary);
+        width: 100vw;
+        height: 25px;
+    }
+
+    .progress-bar {
+        width: var(--progress-balloon);
+        height: 100%;
+        position: absolute;
+        top: 0px; left: 0px;
+        background: var(--secondary);
+        transition: width 0.2s ease;
     }
 
     .progress i {
@@ -225,6 +230,7 @@ export const balloonCss = css`
         -webkit-mask-size: contain;
         mask-size: contain;
         background-color: white;
+        transition: left 0.2s ease;
     }
 
     .progress img {

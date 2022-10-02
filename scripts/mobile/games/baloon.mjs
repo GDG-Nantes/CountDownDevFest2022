@@ -101,7 +101,7 @@ export class BaloonGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`<img src="./assets/baloon-game/air-baloon.svg" />
+        return html`
             <div class="">Blow on your phone 🌬</div>`;
     }
     disconnectedCallback() {

@@ -42,9 +42,8 @@ export class BoatGame extends GameMixin(LitElement) {
             }
             .game {
                 position: relative;
-                display: grid;
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr 1fr;
+                display: flex;
+                flex-direction: column;
             }
 
             #boatFrame {
@@ -55,7 +54,8 @@ export class BoatGame extends GameMixin(LitElement) {
                 position: relative;
                 width: 100vw;
                 overflow: hidden;
-                margin-top: 20px;
+                flex-grow: 1;
+
             }
 
             #boatImage {
@@ -68,7 +68,7 @@ export class BoatGame extends GameMixin(LitElement) {
                 display: flex;
                 justify-content: center;
                 font-size: larger;
-                padding-top: 10vh;
+                padding: 20px;
             }
 
             #long-arrow-left {
@@ -235,7 +235,7 @@ export class BoatGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`<img src="./assets/boat-game/boat.svg" />
+        return html`
             <div class="">Swipe left to navigate</div>`;
     }
 
