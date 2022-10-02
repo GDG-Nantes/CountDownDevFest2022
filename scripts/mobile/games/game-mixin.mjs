@@ -117,7 +117,8 @@ export const GameMixin = (superclass) =>
             this.totalDistanceTraveled = 0;
             this.timer = undefined;
             this.ratioTimeDist = 1;
-            this.delayedWindAndCloudActionId;
+            this.delayedWindAndCloudActionId = undefined;
+            this.delayedLandscapeActionId = undefined;
         }
 
         static properties = {
@@ -240,6 +241,51 @@ export const GameMixin = (superclass) =>
                 .classList.replace('animation-running', 'animation-paused');
             this.renderRoot
                 ?.querySelector('#wind')
+                .classList.replace('animation-running', 'animation-paused');
+        }
+
+        animateLandscape() {
+            if (this.delayedLandscapeActionId) {
+                clearTimeout(this.delayedLandscapeActionId);
+            }
+
+            this.startLandscapeAnimation();
+            this.delayedLandscapeActionId = setTimeout(() => this.stopLandscapeAnimation(), 500);
+        }
+
+        startLandscapeAnimation() {
+            this.renderRoot
+                ?.querySelector('#tree')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#tree-a')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#tree-b')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#tree-c')
+                .classList.replace('animation-paused', 'animation-running');
+            this.renderRoot
+                ?.querySelector('#tree-d')
+                .classList.replace('animation-paused', 'animation-running');
+        }
+
+        stopLandscapeAnimation() {
+            this.renderRoot
+                ?.querySelector('#tree')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#tree-a')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#tree-b')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#tree-c')
+                .classList.replace('animation-running', 'animation-paused');
+            this.renderRoot
+                ?.querySelector('#tree-d')
                 .classList.replace('animation-running', 'animation-paused');
         }
     };

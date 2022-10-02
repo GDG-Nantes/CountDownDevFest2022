@@ -451,3 +451,90 @@ export const cloudCss = css`
         animation-play-state: running;
     }
 `;
+
+export const landCss = css`
+    :host {
+        --sky-blue-color: #70c4c6;
+    }
+    .land {
+        width: 100vw;
+        height: 10vh;
+        position: absolute;
+        bottom: 0;
+        background-color: #83a81c;
+        z-index: 1;
+    }
+    .tree {
+        width:10px;
+        height:40px;
+        background-color: #766257;
+        left: 20vw;
+        top: -4vh;
+        position: absolute;
+
+        animation-name: trees;
+        animation-duration: 7s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+    .tree::before {
+        content: '';
+        position: absolute;
+        bottom: 125%;
+        left: -7px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 20px 43px 20px;
+        border-color: transparent transparent #bfde3b transparent;
+        z-index: 1;
+    }
+    .tree::after {
+        content: '';
+        position: absolute;
+        bottom:100%;
+        left:-25px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 30px 60px 30px;
+        border-color: transparent transparent #93ae29 transparent;
+    }
+    .tree.a {
+        transform: scale(0.5);
+        top: -3vh;
+        left: 30vw;
+    }
+    .tree.b {
+        transform: scale(0.75);
+        left: 46vw;
+        top: -5vh;
+    }
+    .tree.c {
+        transform: scale(1.5);
+        left: 60vw;
+        top: 3vh;
+    }
+    .tree.d {
+        transform: scale(1.25);
+        left: 70vw;
+        top: 4vh;
+    }
+
+    @keyframes trees {
+        0% {
+            transform: translateX(88vw);
+        }
+        100% {
+            transform: translateX(-80vw);
+        }
+    }
+
+    .animation-paused {
+        animation-play-state: paused;
+    }
+
+    .animation-running {
+        animation-play-state: running;
+    }
+`;

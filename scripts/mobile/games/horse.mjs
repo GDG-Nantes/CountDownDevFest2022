@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { GameMixin } from './game-mixin.mjs';
+import { landCss } from '../../styles/shared-style.mjs';
 
 export class HorseGame extends GameMixin(LitElement) {
     constructor() {
@@ -11,6 +12,7 @@ export class HorseGame extends GameMixin(LitElement) {
     }
 
     static styles = [
+        landCss,
         this.mixinStyles,
         css`
             :host {
@@ -24,10 +26,10 @@ export class HorseGame extends GameMixin(LitElement) {
                 grid-template-rows: 1fr 1fr;
             }
 
-            #horserunFrame {
-                display: flex;
-                justify-content: center;
-                align-items: flex-end;
+            #horserun-frame {
+                overflow: hidden;
+                position: relative;
+                background: var(--sky-blue-color);
             }
             #horserun {
                 width: 166px;
@@ -35,6 +37,9 @@ export class HorseGame extends GameMixin(LitElement) {
                 background: url('../../../assets/horse-game/horse-insane-run.png')
                     no-repeat;
                 display: inline-block;
+                position: absolute;
+                bottom: 2vh;
+                left: 10vw;
             }
             #horserun.horserun0 {
                 background-position: 0px 0px;
@@ -113,8 +118,16 @@ export class HorseGame extends GameMixin(LitElement) {
     }
 
     renderGame() {
-        return html` <div id="horserunFrame">
-                <div id="horserun" class="horserun0"></div>
+        return html`
+            <div id="horserun-frame">
+                <div class="land">
+                    <div id="tree" class="tree animation-paused"></div>
+                    <div id="tree-a" class="tree a animation-paused"></div>
+                    <div id="tree-b" class="tree b animation-paused"></div>
+                    <div id="horserun" class="horserun0"></div>
+                    <div id="tree-c" class="tree c animation-paused"></div>
+                    <div id="tree-d" class="tree d animation-paused"></div>
+                </div>
             </div>
             <div id="horseshoes">
                 <button
@@ -133,7 +146,8 @@ export class HorseGame extends GameMixin(LitElement) {
                         : ''}">
                     <img src="./assets/horse-game/horseshoe.svg" />        
                 </button>
-            </div>`;
+            </div>
+        `;
     }
 
     runOneStep() {
@@ -154,12 +168,14 @@ export class HorseGame extends GameMixin(LitElement) {
 
     leftHorseShoeClick() {
         if (!this.nextStepHasToBeRight) {
+            this.animateLandscape();
             this.runOneStep();
         }
     }
 
     rightHorseShoeClick() {
         if (this.nextStepHasToBeRight) {
+            this.animateLandscape();
             this.runOneStep();
         }
     }
