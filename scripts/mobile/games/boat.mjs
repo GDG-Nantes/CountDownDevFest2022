@@ -11,7 +11,7 @@ export class BoatGame extends GameMixin(LitElement) {
         let touchendX = 0;
 
         const checkDirection = () => {
-            console.log("checkDirection");
+            console.log('checkDirection');
             if (touchendX < touchstartX) {
                 this.animateWindAndCloud();
                 this.runOneStep();
@@ -53,11 +53,10 @@ export class BoatGame extends GameMixin(LitElement) {
                 width: 100vw;
                 overflow: hidden;
                 flex-grow: 1;
-
             }
 
             #boat-image {
-                margin-top: 7vh;
+                margin-top: 15vh;
                 margin-left: 15vw;
                 z-index: 5;
             }
@@ -105,8 +104,7 @@ export class BoatGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`
-            <div class="">Swipe left to navigate</div>`;
+        return html` <div class="">Swipe left to navigate</div>`;
     }
 
     renderGame() {

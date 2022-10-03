@@ -29,6 +29,12 @@ export const buttonCss = css`
         box-shadow: rgb(0 0 0 / 20%) 0px 3px 1px -2px,
             rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px;
     }
+
+    @media (max-width: 325px) {
+        button {
+            padding: 6px 5px;
+        }
+    }
 `;
 
 export const ticketCss = css`
@@ -213,7 +219,8 @@ export const balloonCss = css`
         width: var(--progress-balloon);
         height: 100%;
         position: absolute;
-        top: 0px; left: 0px;
+        top: 0px;
+        left: 0px;
         background: var(--secondary);
         transition: width 0.2s ease;
     }
@@ -465,8 +472,8 @@ export const landCss = css`
         z-index: 1;
     }
     .tree {
-        width:10px;
-        height:40px;
+        width: 10px;
+        height: 40px;
         background-color: #766257;
         left: 20vw;
         top: -4vh;
@@ -492,8 +499,8 @@ export const landCss = css`
     .tree::after {
         content: '';
         position: absolute;
-        bottom:100%;
-        left:-25px;
+        bottom: 100%;
+        left: -25px;
         width: 0;
         height: 0;
         border-style: solid;

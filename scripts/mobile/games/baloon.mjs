@@ -36,6 +36,7 @@ export class BaloonGame extends GameMixin(LitElement) {
         this.mixinStyles,
         css`
             :host {
+                --size-balloon: 29px;
                 --icon-src: url('./assets/baloon-game/air-baloon.svg');
             }
 
@@ -55,7 +56,7 @@ export class BaloonGame extends GameMixin(LitElement) {
                 position: relative;
                 background: #70c4c6;
             }
-            
+
             .main-balloon .balloon {
                 top: initial;
                 --bottom-balloon: -70px;
@@ -105,8 +106,7 @@ export class BaloonGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`
-            <div class="">Blow on your phone 🌬</div>`;
+        return html` <div class="">Blow on your phone 🌬</div>`;
     }
     disconnectedCallback() {
         this.stop();

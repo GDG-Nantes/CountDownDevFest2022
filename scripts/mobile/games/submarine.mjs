@@ -41,19 +41,9 @@ export class SubmarineGame extends GameMixin(LitElement) {
             }
 
             .propeller-border {
-                position: relative;
-                /*width: min(70vw, 70vh);
-                height: min(70vw, 70vh);
-                border-radius: min(70vw, 70vh);*/
-                /*border: min(5vw, 5vh);
-                border-color: var(--secondary);
-                border-style: solid;
-                background: radial-gradient(
-                    circle,
-                    var(--secondary) 0%,
-                    var(--secondary) 51%,
-                    var(--primary-dark) 100%
-                );*/
+                position: absolute;
+                top: 60%;
+                margin-top: calc(-1 * min(75vw, 75vh) / 2);
                 width: min(75vw, 75vh);
                 height: min(75vw, 75vh);
                 border-radius: min(75vw, 75vh);
@@ -246,10 +236,9 @@ export class SubmarineGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`
-            <div class="">
-                Turn the propeller (don't throw it, keep in contact) 👆
-            </div>`;
+        return html` <div class="">
+            Turn the propeller (don't throw it, keep in contact) 👆
+        </div>`;
     }
 
     renderGame() {

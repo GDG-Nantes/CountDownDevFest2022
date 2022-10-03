@@ -23,7 +23,7 @@ export class HorseGame extends GameMixin(LitElement) {
                 position: relative;
                 display: grid;
                 grid-template-columns: 1fr;
-                grid-template-rows: 1fr 1fr;
+                grid-template-rows: 1fr 40vh;
             }
 
             #horserun-frame {
@@ -88,9 +88,9 @@ export class HorseGame extends GameMixin(LitElement) {
                 background-color: var(--primary);
             }
 
-                #horseshoes button img {
-                    height: 100%;
-                }
+            #horseshoes button img {
+                height: 100%;
+            }
 
             .icon {
                 width: var(--icon-width);
@@ -113,8 +113,7 @@ export class HorseGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html`
-            <div class="">Tap on the colored horse shoe</div>`;
+        return html` <div class="">Tap on the colored horse shoe</div>`;
     }
 
     renderGame() {
@@ -133,18 +132,14 @@ export class HorseGame extends GameMixin(LitElement) {
                 <button
                     id="horseLeftShoe"
                     @click="${() => this.leftHorseShoeClick()}"
-                    class="${!this.nextStepHasToBeRight
-                        ? 'colored'
-                        : ''}">
-                    <img src="./assets/horse-game/horseshoe.svg" />        
+                    class="${!this.nextStepHasToBeRight ? 'colored' : ''}">
+                    <img src="./assets/horse-game/horseshoe.svg" />
                 </button>
                 <button
                     id="horseRightShoe"
                     @click="${() => this.rightHorseShoeClick()}"
-                    class="${this.nextStepHasToBeRight
-                        ? 'colored'
-                        : ''}">
-                    <img src="./assets/horse-game/horseshoe.svg" />        
+                    class="${this.nextStepHasToBeRight ? 'colored' : ''}">
+                    <img src="./assets/horse-game/horseshoe.svg" />
                 </button>
             </div>
         `;
