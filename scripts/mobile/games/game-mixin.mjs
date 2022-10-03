@@ -15,6 +15,7 @@ export const GameMixin = (superclass) =>
                     --header-height: 50px;
                     --progress-balloon: 0px;
                     --icon-width: 150px;
+                    overflow: hidden;
                 }
 
                 header {
@@ -172,9 +173,7 @@ export const GameMixin = (superclass) =>
                         ${instruction}
                     </section>
                 </section>
-                <section class="game">
-                    ${game}
-                </section>
+                <section class="game">${game}</section>
                 <section class="progress">
                     <section class="progress-bar"></section>
                     <i class="progress-icon"></i>
@@ -205,7 +204,10 @@ export const GameMixin = (superclass) =>
             }
 
             this.startWindAndCloudAnimation();
-            this.delayedWindAndCloudActionId = setTimeout(() => this.stopWindAndCloudAnimation(), 1000);
+            this.delayedWindAndCloudActionId = setTimeout(
+                () => this.stopWindAndCloudAnimation(),
+                1000
+            );
         }
 
         startWindAndCloudAnimation() {
@@ -250,7 +252,10 @@ export const GameMixin = (superclass) =>
             }
 
             this.startLandscapeAnimation();
-            this.delayedLandscapeActionId = setTimeout(() => this.stopLandscapeAnimation(), 500);
+            this.delayedLandscapeActionId = setTimeout(
+                () => this.stopLandscapeAnimation(),
+                500
+            );
         }
 
         startLandscapeAnimation() {

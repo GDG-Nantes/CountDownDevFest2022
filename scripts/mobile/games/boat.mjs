@@ -19,10 +19,12 @@ export class BoatGame extends GameMixin(LitElement) {
         };
 
         this.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             touchstartX = e.changedTouches[0].screenX;
         });
 
         this.addEventListener('touchend', (e) => {
+            e.preventDefault();
             touchendX = e.changedTouches[0].screenX;
             checkDirection();
         });
