@@ -4,7 +4,7 @@ import { GameMixin } from './game-mixin.mjs';
 export class SubmarineGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 150;
+        this.distanceTraveledByStep = 250;
         this.finish = false;
     }
 

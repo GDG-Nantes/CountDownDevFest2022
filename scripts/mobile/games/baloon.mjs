@@ -9,7 +9,7 @@ const State = {
 export class BaloonGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 500;
+        this.distanceTraveledByStep = 600;
         this.blowStarted = false;
 
         /**
@@ -20,10 +20,6 @@ export class BaloonGame extends GameMixin(LitElement) {
         this.state = State.IDLE; // state
         this.isRunning = false; // Listening is running
         this.iteration = 0; // Iteration of frequency analysis (to check every 5 seconds)
-        this.peakThreshold = -65; //
-        this.minRunLength = 2;
-        this.freqMin = 0; // Mininum Frequency to watch
-        this.freqMax = 29500; // Maximum Frequency to watch
 
         this.iterationThreadshold = 40;
         this.iterationOverThreshold = 0;
@@ -211,26 +207,14 @@ export class BaloonGame extends GameMixin(LitElement) {
 
     customRaf() {
         this.analyser.getByteFrequencyData(this.dataArray);
-        //const displayFreq = [];
         let max = -Infinity;
         let overThreashold = true;
         let sum = 0;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 5; i++) {
             const barHeight = this.dataArray[i] / 2 + 100;
             sum += barHeight;
         }
-        max = sum / 4;
-        /*for (let i = 0; i < this.bufferLength; i++) {
-            const barHeight = this.dataArray[i] / 2 + 100;
-            if (barHeight > max) {
-                max = barHeight;
-            }
-            //displayFreq.push(barHeight + 100);
-            //canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
-            //canvasCtx.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight);
-
-            //x += barWidth + 1;
-        }*/
+        max = sum / 5;
         if (max > this.gameSoundThreshold) {
             //if (overThreashold) {
             this.iterationOverThreshold++;
