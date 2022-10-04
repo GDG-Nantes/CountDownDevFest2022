@@ -234,7 +234,7 @@ export class Mobile extends LitElement {
                     </div>
                 </section>
                 <world-map-mobile
-                    zoom="10"
+                    zoom="6"
                     .continents=${this.continents}
                     .service=${this.service}
                     .reset=${this.resetGame}
