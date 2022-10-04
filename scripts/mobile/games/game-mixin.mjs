@@ -168,16 +168,16 @@ export const GameMixin = (superclass) =>
                         src="${this.service.getUser().photoURL}"
                         referrerpolicy="no-referrer" />
                 </header>
+                <section class="progress">
+                    <section class="progress-bar"></section>
+                    <i class="progress-icon"></i>
+                </section>
                 <section class="instructions">
                     <section class="floating-instructions">
                         ${instruction}
                     </section>
                 </section>
                 <section class="game">${game}</section>
-                <section class="progress">
-                    <section class="progress-bar"></section>
-                    <i class="progress-icon"></i>
-                </section>
             `;
         }
 
