@@ -50,8 +50,9 @@ export class CountDown extends LitElement {
             }
             .countdown {
                 position: absolute;
-                top: calc(15px + 175px + 10px);
-                width: 100vw;
+                padding-left: 45px;
+                top: calc(15px + 175px);
+                width: calc(100vw - 45px);
                 text-align: center;
                 z-index: 999;
                 font-size: 5rem;

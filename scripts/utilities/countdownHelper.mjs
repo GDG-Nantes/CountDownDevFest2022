@@ -1,7 +1,7 @@
 import { Timer } from './timer.mjs';
 import { AudioPlayer } from './audio.mjs';
 import { PLAYLIST, LAST_SONGS_PLAYLIST } from './playlist.mjs';
-const DEBUG_MUTE = true; // Default = false; true if you don't want the sound
+const DEBUG_MUTE = false; // Default = false; true if you don't want the sound
 //const timeBeforeLastSongs = 4 * 60 * 1000 + 8 * 1000 + 5 * 1000 // 4 Minute 08 + 5s of dropdown song // MOP
 const timeBeforeLastSongs = 4 * 60 * 1000 + 52 * 1000 + 5 * 1000; // 4 Minute 52 + 5s of dropdown song // ACDC
 const dropTimeForLastSong = 5 * 1000; // 5 sec

@@ -5,9 +5,9 @@ export class Timer {
         // Target Time : '2019-10-21T09:00:00'
         // Uncomment the line wanted to test
         this.targetDate = new Date('2022-10-20T09:07:00');
-        //this.targetDate = new Date()
-        //this.targetDate.setMinutes(this.targetDate.getMinutes() + 10)
-        //this.targetDate.setSeconds(this.targetDate.getSeconds() + 40)
+        //this.targetDate = new Date();
+        //this.targetDate.setMinutes(this.targetDate.getMinutes() + 10);
+        //this.targetDate.setSeconds(this.targetDate.getSeconds() + 40);
         this.callback = callback;
         this.checkTime();
     }
