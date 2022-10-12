@@ -4,7 +4,7 @@ import { GameMixin } from './game-mixin.mjs';
 export class TrainGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 4500;
+        this.distanceTraveledByStep = 3500;
     }
 
     static properties = {};

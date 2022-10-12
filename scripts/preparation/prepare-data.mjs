@@ -23,7 +23,7 @@ export function prepareData() {
     let sourceGDG = undefined;
     let targetGDG = undefined;
     // END DEBUG
-    return fetch('https://gdg.community.dev/api/chapter_region?chapters=true')
+    return fetch('./assets/json/gdg.json')
         .then((res) => res.json())
         .then((arrayContinents) => {
             for (let continentA of arrayContinents) {

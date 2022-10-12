@@ -9,21 +9,19 @@ const State = {
 export class BaloonGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 600;
-        this.blowStarted = false;
+        this.distanceTraveledByStep = 550;
 
         /**
          * Params linked to audio Frequency Engine
          */
 
-        this.audioContext = new AudioContext();
-        this.state = State.IDLE; // state
+        this.heightBallon = 0;
         this.isRunning = false; // Listening is running
         this.iteration = 0; // Iteration of frequency analysis (to check every 5 seconds)
 
+        this.limitThreadshold = 0;
         this.iterationThreadshold = 40;
         this.iterationOverThreshold = 0;
-        this.gameSoundThreshold = 190;
     }
 
     static properties = {};
@@ -57,12 +55,13 @@ export class BaloonGame extends GameMixin(LitElement) {
                 top: initial;
                 --bottom-balloon: -70px;
                 bottom: var(--bottom-balloon);
+                animation: bottom 100ms linear 0;
                 background: #70c4c6;
             }
 
             .line-limit::before {
                 position: absolute;
-                content: 'line to pass for a valid blow';
+                content: 'line to pass for a valid move';
                 font-size: 1.5rem;
                 top: -1.5rem;
             }
@@ -86,6 +85,36 @@ export class BaloonGame extends GameMixin(LitElement) {
                 align-content: center;
                 justify-content: center;
             }
+
+            .push_button {
+                position: relative;
+                width: 200px;
+                color: #fff;
+                display: block;
+                text-decoration: none;
+                margin: 0 auto;
+                border-radius: 5px;
+                border: solid 1px #d94e3b;
+                background: #cb3b27;
+                text-align: center;
+                padding: 20px 30px;
+                font-size: 25px;
+
+                -webkit-transition: all 0.1s;
+                -moz-transition: all 0.1s;
+                transition: all 0.1s;
+
+                -webkit-box-shadow: 0px 9px 0px #84261a;
+                -moz-box-shadow: 0px 9px 0px #84261a;
+                box-shadow: 0px 9px 0px #84261a;
+            }
+            .push_button:active {
+                -webkit-box-shadow: 0px 2px 0px #84261a;
+                -moz-box-shadow: 0px 2px 0px #84261a;
+                box-shadow: 0px 2px 0px #84261a;
+                position: relative;
+                top: 7px;
+            }
         `,
     ];
 
@@ -102,22 +131,14 @@ export class BaloonGame extends GameMixin(LitElement) {
     }
 
     renderInstruction() {
-        return html` <div class="">Blow on your phone 🌬</div>`;
+        return html` <div class="">Keep the ballon above the line</div>`;
     }
     disconnectedCallback() {
         this.stop();
     }
 
     renderGame() {
-        return html`
-            ${this.blowStarted
-                ? this.renderGameArea()
-                : html`<div
-                      class="blow-instruction"
-                      @click="${() => this.startBlow()}">
-                      Click to Start Blowing
-                  </div>`}
-        `;
+        return this.renderGameArea();
     }
 
     renderGameArea() {
@@ -134,9 +155,24 @@ export class BaloonGame extends GameMixin(LitElement) {
                         <div class="basket"></div>
                     </div>
                 </div>
-                <div class="line-limit"></div>
+                <div class="line-limit">
+                    <a
+                        href="#"
+                        class="push_button"
+                        @click="${() => this.push()}">
+                        Push Me
+                    </a>
+                </div>
             </div>
         `;
+    }
+
+    push() {
+        this.heightBallon = Math.min(this.heightBallon + 100, 300);
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.customRaf();
+        }
     }
 
     displayBalloon(freq) {
@@ -146,7 +182,7 @@ export class BaloonGame extends GameMixin(LitElement) {
             );
         }
 
-        const bottom = freq - this.gameSoundThreshold;
+        const bottom = freq;
 
         this.balloonElt.style?.setProperty('--bottom-balloon', `${bottom}px`);
     }
@@ -170,67 +206,20 @@ export class BaloonGame extends GameMixin(LitElement) {
 
     stop() {
         this.isRunning = false;
-        const tracks = this.stream.getTracks();
-        tracks.forEach(function (track) {
-            track.stop();
-        });
-    }
-
-    startBlow() {
-        this.blowStarted = true;
-        this.requestUpdate();
-        navigator.mediaDevices
-            .getUserMedia({ audio: true, video: false })
-            .then((stream) => {
-                try {
-                    this.stream = stream;
-                    /* use the stream */
-                    const input =
-                        this.audioContext.createMediaStreamSource(stream);
-                    this.analyser = this.audioContext.createAnalyser();
-                    input.connect(this.analyser);
-
-                    this.analyser.fftSize = 256;
-                    this.bufferLength = this.analyser.frequencyBinCount;
-                    console.log(this.bufferLength);
-                    this.dataArray = new Uint8Array(this.bufferLength);
-                    this.isRunning = true;
-                    requestAnimationFrame(this.customRaf.bind(this));
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .catch((err) => {
-                /* handle the error */
-            });
     }
 
     customRaf() {
-        this.analyser.getByteFrequencyData(this.dataArray);
-        let max = -Infinity;
-        let overThreashold = true;
-        let sum = 0;
-        for (let i = 0; i < 5; i++) {
-            const barHeight = this.dataArray[i] / 2 + 100;
-            sum += barHeight;
-        }
-        max = sum / 5;
-        if (max > this.gameSoundThreshold) {
-            //if (overThreashold) {
-            this.iterationOverThreshold++;
-        } else {
-            this.iterationOverThreshold = 0;
-        }
-        this.displayBalloon(max);
-        if (this.iterationOverThreshold > this.iterationThreadshold) {
+        this.displayBalloon(this.heightBallon);
+        if (this.heightBallon > this.limitThreadshold) {
             this.animateWindAndCloud();
-            this.runOneStep(max);
-            console.log('Exceed', max, this.iterationOverThreshold);
+            this.runOneStep();
+            console.log('Exceed', this.iterationOverThreshold);
         }
-        console.log(max, this.iterationOverThreshold);
         if (this.isRunning) {
             requestAnimationFrame(this.customRaf.bind(this));
         }
+
+        this.heightBallon = Math.max(-70, this.heightBallon - 5);
     }
 }
 customElements.define('baloon-game', BaloonGame);

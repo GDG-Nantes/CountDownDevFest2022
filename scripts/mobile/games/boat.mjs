@@ -5,7 +5,7 @@ import { cloudCss } from '../../styles/shared-style.mjs';
 export class BoatGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 4500;
+        this.distanceTraveledByStep = 3500;
 
         let touchstartX = 0;
         let touchendX = 0;

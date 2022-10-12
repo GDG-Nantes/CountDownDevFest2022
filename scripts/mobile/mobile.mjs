@@ -427,7 +427,7 @@ export class Mobile extends LitElement {
     }
 
     finish(event) {
-        const days = Math.round(this.timeGame / 1000 / 23);
+        const days = Math.round(this.timeGame / 1000 / 32);
         this.endGame = {
             distance: this.globalDistance,
             days,
