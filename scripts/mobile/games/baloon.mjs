@@ -9,7 +9,7 @@ const State = {
 export class BaloonGame extends GameMixin(LitElement) {
     constructor() {
         super();
-        this.distanceTraveledByStep = 550;
+        this.distanceTraveledByStep = 500;
 
         /**
          * Params linked to audio Frequency Engine
@@ -213,7 +213,6 @@ export class BaloonGame extends GameMixin(LitElement) {
         if (this.heightBallon > this.limitThreadshold) {
             this.animateWindAndCloud();
             this.runOneStep();
-            console.log('Exceed', this.iterationOverThreshold);
         }
         if (this.isRunning) {
             requestAnimationFrame(this.customRaf.bind(this));
